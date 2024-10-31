@@ -1,0 +1,122 @@
+{% extends 'layouts/base.html' %}
+
+{% block css%}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/addRenter.css')}}">
+{% endblock %}
+
+{% block title %}
+    Thêm địa chỉ trọ mới
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <h1>Thêm địa chỉ trọ mới</h1>
+    <form action="#" method="post" id="form" class="row g-3" enctype="multipart/form-data">
+        <div class="col-md-9">
+            <label for="name" class="form-label">Tên nhà trọ</label>
+            <input type="text" class="form-control" id="name" required placeholder="Nhà trọ ..." name="name">
+            <div class="invalid-feedback">
+                Vui lòng nhập tên nhà trọ.
+            </div>
+        </div>
+
+       <div class="form-floating row g-3">
+            <div class="col-md-4">
+                <label for="city" class="form-label">Tỉnh / Thành phố</label>
+                <select name="city" class="form-select" id="city" required>
+                  <option selected disabled value="">Chọn...</option>
+                </select>
+                <div class="invalid-feedback">
+                  Vui lòng chọn một tỉnh thành hợp lệ.
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="district" class="form-label">Quận / Huyện</label>
+                <select name="district" class="form-select" id="district" required>
+                  <option selected disabled value="">Chọn...</option>
+                </select>
+                <div class="invalid-feedback">
+                  Vui lòng chọn một quận huyện hợp lệ.
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label for="ward" class="form-label">Xã / Phường</label>
+                <select name="ward" class="form-select" id="ward" required>
+                  <option selected disabled value="">Chọn...</option>
+                </select>
+                <div class="invalid-feedback">
+                  Vui lòng chọn một xã phường hợp lệ.
+                </div>
+            </div>
+            
+        </div>
+        
+        <div class="form-floating row r-3 align-items-end">
+            <div class="col-md-6">
+                <label for="street" class="form-label">Số nhà</label>
+                <input type="text" class="form-control" id="street" name="street"  placeholder="số nhà, ấp Xã Quận" placeholder="số nhà, ấp Xã Quận">
+                <div class="invalid-feedback">
+                    Vui lòng nhập địa chỉ chi tiết.
+                </div>
+            </div>
+        </div>
+        <div class="alert alert-primary" id="location-alert" role="alert">
+            Vui lòng định vị bằng bảng đồ
+        </div>
+        <div class="form-floating row r-3 align-items-end">
+            <div class="col-md-6 mt-3">
+                <button type="button" class="btn btn-success" id="check-location">Chọn từ bản đồ</button>
+            </div>
+            <div class="">
+                <label for="full-address2" class="form-label">Địa chỉ phát hiện</label>
+                <input type="text" name="full-address2" class="form-control" id="full-address2" required  disabled>
+                <div class="invalid-feedback">
+                    Vui lòng mở bản đồ để chọn địa chỉ.
+                </div>
+            </div>
+            <div style="height: 0; overflow: hidden;">
+                <input type="text" class="form-control" id="type" name="type" required>
+                <input type="text" class="form-control" id="latitude" name="lat" required>
+                <input type="text" class="form-control" id="longitude" name="lon"  >
+                <input type="text" class="form-control" name="flood" id="hard" required >
+                <input type="text" name="full-address" class="form-control" id="full-address" required >
+            </div>
+            
+            <!-- 
+            <div class="col-md-3">
+                <label for="latitude" class="form-label">Vĩ độ</label>
+                <input type="text" class="form-control" id="latitude" required disabled>
+                <div class="invalid-feedback">
+                    Vui lòng mở bản đồ để chọn địa chỉ.
+                </div>
+            </div> -->
+        </div>
+
+
+        <div class="mb-3">
+            <label for="images" class="form-label">Hình ảnh</label>
+            <input name="images" class="form-control" type="file" id="images" accept="image/*" multiple required>
+        </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label" >Mô tả</label>
+            <textarea name="description" class="form-control" id="description" rows="3"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" id="submit">Submit</button>
+    </form>
+
+
+    <div id="overlay">
+        <div id="map"></div>
+        <div>
+            <button type="button" class="btn btn-success" id="close-check-location">Xác nhận</button>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="{{url_for('static', filename='js/address.js')}}"></script>
+    <script src="{{url_for('static', filename='js/addRenter.js')}}"></script>
+{% endblock %}

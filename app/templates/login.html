@@ -1,0 +1,17 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+    <p> {{error}} </p>
+    <h1>Login</h1>
+    <h3>Bạn là sinh viên</h3>
+    <!-- Login by google -->
+    <a href="/login/google">Login with Google</a>
+    <h3>Hoặc</h3>
+    <h3>Bạn là chủ thuê</h3>
+    <form action="/login" method="post">
+        <input type="text" name="username" placeholder="Username">
+        <input type="password" name="password" placeholder="Password">
+        <button type="submit">Login</button>
+    </form>
+{% endblock %}
