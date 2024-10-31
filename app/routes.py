@@ -119,6 +119,13 @@ def lookup():
     university = getSchoolName(current_user.email)
     return render_template('lookup.html', title='Tra cứu', university=university)
 
+@app.route('/detail/<int:id>')
+def detail(id):
+    house = House.query.get(id)
+    images = HouseImage.query.filter_by(house_id=id).all()
+    house.images = images
+    return render_template('detail.html', title='Chi tiết', house=house)
+
 def addRenterNew(request):
     name = request.form['name']
     city = request.form['city']
@@ -172,6 +179,8 @@ def addRenterNew(request):
     # db.session.add(house_image)
     # db.session.commit()
     
+
+
 
     
 

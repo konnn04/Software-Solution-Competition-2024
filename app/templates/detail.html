@@ -1,0 +1,51 @@
+{% extends 'layouts/base.html' %}
+
+{% block css%}
+    <!-- <link rel="stylesheet" href="{{url_for('static', filename='css/addRenter.css')}}"> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block title %}
+    Chi tiết
+{% endblock %}
+
+{% block content %}
+
+<div class="row align-items-start">
+    <div class="col-7" style="background-color: aqua;">
+      
+        <div id="carouselExampleIndicators" class="carousel slide w-100 h-50">
+            <div class="carousel-indicators">
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
+              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+            </div>
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img src="{{url_for('static', filename='file/mau-phong-tro-co-gac-lung-dep2022-5_1730362385.jpg')}}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item">
+                <img src="{{url_for('static', filename='file/mau-phong-tro-co-gac-lung-dep2022-5_1730362385.jpg')}}" class="d-block w-100" alt="...">
+              </div>
+              <div class="carousel-item">
+                <img src="..." class="d-block w-100" alt="...">
+              </div>
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+              <span class="carousel-control-next-icon" aria-hidden="true"></span>
+              <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+    </div>
+    <div class="col-3"style="background-color: red;">
+        <h2>Tên trọ</h2>
+        <button type="button" class="btn btn-success">2.100.000 đ</button>
+    </div>
+</div>
+
+{% endblock %}
