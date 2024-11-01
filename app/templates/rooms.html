@@ -13,26 +13,50 @@
 
     <h1>Quản lý phòng của trọ {{ house.name }}</h1>
     <div>
-        <a href="{{ url_for('addRoom', id=house.id )}}" class="btn btn-primary">Thêm phòng</a>
+        <a href="{{ url_for('rent') }}" class="btn btn-secondary">Quay lại</a>
+        <a href="{{ url_for('editHouse', id=house.id )}}" class="btn btn-primary">Sửa thông tin</a>
+        <a href="{{ url_for('addRoom', id=house.id )}}" class="btn btn-success">Thêm phòng</a>
+        
     </div>
-    <div class="rental-list">
+    
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>STT</th>
+            <th>Tên phòng</th>
+            <th>Diện tích (m2)</th>
+            <th>Giá (đ)</th>
+            <th>Trạng thái</th>
+            <th>Hành động</th>
+        </tr>
+    </thead>
+    <tbody>
         {% for room in rooms %}
-            <div class="rental-item">
-                <h2>{{ room.name }}</h2>
-                <p>Diện tích: {{ room.area }} m2</p>
-                <p>Giá: {{ room.price }} đ</p>
-                <p>Trạng thái: {{ room.status }}</p>
-                <div class="actions">
-                    <a href="" class="btn btn-secondary">Sửa</a>
+            <tr class="room-row" data-bs-toggle="tooltip" data-bs-html="true" data-bs-title="Diện tích: {{ room.area }} m2<br>Giá: {{ room.price }} đ">
+                <td>{{ loop.index }}</td>
+                <td>{{ room.name }}</td>
+                <td>{{ room.area }}</td>
+                <td>{{ room.price }}</td>
+                <td>{{ room.current_people}}/{{ room.max_people }}</td>
+                
+                <td>
+                    <a href="{{ url_for('editRoom', id=room.id) }}" class="btn btn-secondary">Sửa</a>
                     <a href="{{ url_for('deleteRoom', id=room.id) }}" class="btn btn-danger">Xóa</a>
-                </div>
-            </div>
+                </td>
+            </tr>
         {% endfor %}
+    </tbody>
+</table>
+
+
+
+
 {% endblock %}
 
 {% block scripts %}
-    <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-+T2lXZV5VXt+2Zl2+3+L8v+u3l7lCt5xjzj3h9b5ZpA=" crossorigin=""></script> -->
-    <script src="{{url_for('static', filename='js/lookup.js')}}"></script>
-    <script src="{{url_for('static', filename='js/address.js')}}"></script>
+<script>
+    const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+    const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+</script>
 {% endblock %}
 

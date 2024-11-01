@@ -3,7 +3,7 @@
 {% block navbar %}
 <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="/">Navbar scroll</a>
+      <a class="navbar-brand" href="/">OU Room</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
       </button>
@@ -12,9 +12,16 @@
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/lookup">Tra cứu</a>
           </li>
+          {% if user.role == 'renter' %}
           <li class="nav-item">
             <a class="nav-link active" aria-current="page" href="/rent">Quản lý cho thuê</a>
           </li>
+          {% endif %}
+          {% if user.role == 'student' %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/matchroom">Tìm ở ghép</a>
+          </li>
+          {% endif %}
           <!-- <li class="nav-item">
             <a class="nav-link" href="#">Link</a>
           </li> -->

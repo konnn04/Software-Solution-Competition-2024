@@ -35,46 +35,75 @@ const w = {}
 
 const map = L.map('map')
 
+const customIcon1 = L.icon({
+    iconUrl: 'https://cdn-icons-png.flaticon.com/512/1076/1076983.png', // Đường dẫn đến icon tùy chỉnh
+    iconSize: [38, 38], // Kích thước của icon
+    iconAnchor: [22, 38], // Điểm neo của icon
+    popupAnchor: [-3, -76], // Điểm neo của popup
+    // shadowUrl: 'https://example.com/path/to/custom-shadow.png', // Đường dẫn đến shadow tùy chỉnh
+    // shadowSize: [68, 95], // Kích thước của shadow
+    // shadowAnchor: [22, 94] // Điểm neo của shadow
+});
+
+const customIcon2 = L.icon({
+    iconUrl: 'https://cdn-icons-png.freepik.com/512/1020/1020231.png', // Đường dẫn đến icon tùy chỉnh
+    iconSize: [38, 38], // Kích thước của icon
+    iconAnchor: [22, 38], // Điểm neo của icon
+    popupAnchor: [-3, 0], // Điểm neo của popup
+    // shadowUrl: 'https://example.com/path/to/custom-shadow.png', // Đường dẫn đến shadow tùy chỉnh
+    // shadowSize: [68, 95], // Kích thước của shadow
+    // shadowAnchor: [22, 94] // Điểm neo của shadow
+});
+
+let marker = null;
+
 const typeLabel = {
-    'residential':'Khu dân cư',
-    'commercial':'Khu thương mại',
-    'industrial':'Khu công nghiệp',
-    'recreational':'Khu vui chơi giải trí',
-    'school':'Trường học',
-    'hospital':'Bệnh viện',
-    'police':'Cơ quan công an',
-    'government':'Cơ quan hành chính',
-    'stadium':'Sân vận động',
-    'market':'Chợ',
-    'park':'Công viên',
-    'marketplace':'Trung tâm thương mại',
-    'college':'Trường đại học',
-    'university':'Trường đại học',
-    'trunk':'Quốc lộ, đường chính',
-    'primary':'Khu vực bậc 1',
-    'secondary':'Khu vực bậc 2',
-    'tertiary':'Khu vực bậc 3',
-    'pier':'Bến phà',
-    'unclassified':'Không xác định',
-    'sports_centre':'Trung tâm thể thao',
-    'townhall':'Dinh thự',
-    'cafe':'Quán cà phê',
-    'fast_food':'Nhà hàng nhanh',
-    'bank':'Ngân hàng',
-    'aerodrome':'Sân bay',
-    'motorway':'Đường cao tốc',
-    'recreation_ground':'Khu vui chơi',
-    'golf_course':'Sân golf',
-    'bridge':'Cây cầu',
-    'supermarket':'Siêu thị',
-    'administrative':'Khu hành chính',
-    'fort':'Pháo đài',
-    'station':'Trạm xe lửa',
-    'miniature_golf':'Sân golf nhỏ',    
-    'pitch':'Sân bóng',
-    'library':'Thư viện',
-    'convenience':'Tiện ích',
-    'swimming_pool':'Bể bơi',
+    'residential': ['Khu dân cư', 0.8],
+    'commercial': ['Khu thương mại', 0.7],
+    'industrial': ['Khu công nghiệp', 0.4],
+    'recreational': ['Khu vui chơi giải trí', 0.7],
+    'school': ['Trường học', 0.9],
+    'hospital': ['Bệnh viện', 1.0],
+    'police': ['Cơ quan công an', 1.0],
+    'government': ['Cơ quan hành chính', 0.9],
+    'stadium': ['Sân vận động', 0.5],
+    'market': ['Chợ', 0.6],
+    'park': ['Công viên', 0.7],
+    'marketplace': ['Trung tâm thương mại', 0.7],
+    'college': ['Trường đại học', 0.8],
+    'university': ['Trường đại học', 0.8],
+    'trunk': ['Quốc lộ, đường chính', 0.7],
+    'primary': ['Khu vực đông dân cư', 0.8],
+    'secondary': ['Khu vực thưa dân cư', 0.7],
+    'tertiary': ['Khu vực ít dân cư', 0.6],
+    'pier': ['Bến phà', 0.4],
+    'unclassified': ['Không xác định', 0.3],
+    'sports_centre': ['Trung tâm thể thao', 0.6],
+    'townhall': ['Dinh thự', 0.8],
+    'cafe': ['Quán cà phê', 0.7],
+    'fast_food': ['Nhà hàng nhanh', 0.7],
+    'bank': ['Ngân hàng', 0.9],
+    'aerodrome': ['Sân bay', 0.5],
+    'motorway': ['Đường cao tốc', 0.4],
+    'recreation_ground': ['Khu vui chơi', 0.7],
+    'golf_course': ['Sân golf', 0.8],
+    'bridge': ['Cây cầu', 0.6],
+    'supermarket': ['Siêu thị', 0.7],
+    'administrative': ['Khu hành chính', 0.9],
+    'fort': ['Pháo đài', 0.7],
+    'station': ['Trạm xe lửa', 0.6],
+    'miniature_golf': ['Sân golf nhỏ', 0.8],
+    'pitch': ['Sân bóng', 0.6],
+    'library': ['Thư viện', 0.9],
+    'convenience': ['Tiện ích', 0.7],
+    'swimming_pool': ['Bể bơi', 0.7],
+    'apartments': ['Chung cư', 0.8],
+    'house': ['Nhà riêng', 0.9],
+    'service': ['Dịch vụ', 0.6],
+    'restaurant': ['Nhà hàng', 0.7],
+    'parking': ['Bãi đậu xe', 0.5],
+    'wastewater_plant': ['Nhà máy xử lý nước thải', 0.3],
+    'playground': ['Sân chơi', 0.8]
 }
 
 function triggerEvents(){
@@ -86,6 +115,7 @@ function triggerEvents(){
     const fullAddress = document.getElementById('full-address');
     const fullAddress2 = document.getElementById('full-address2');
     const type = document.getElementById('type');
+    const type2 = document.getElementById('type2');
     const hard = document.getElementById('hard');
     const submit = document.getElementById('submit');
 
@@ -94,14 +124,16 @@ function triggerEvents(){
     const ward = document.getElementById('ward');
     const street = document.getElementById('street');
     const locationAlert = document.getElementById('location-alert');
+    const importance = document.getElementById('importance');
+    const place_rank = document.getElementById('place_rank')
 
-    let marker = null;
 
     closeLoca.addEventListener('click', () => {
         overlay.classList.remove('show')
     })
     
-    check.addEventListener('click', () => {
+    check.addEventListener('click', async () => {
+        check.disabled = true;
         if (!city.value || !district.value || !ward.value) {
             console.log('Please fill in all fields')
             locationAlert.className = 'alert alert-danger';
@@ -111,11 +143,23 @@ function triggerEvents(){
 
         const address = `${street.value} ${ward.value} ${district.value} ${city.value}`;
         // console.log(address);
-        overlay.classList.add('show')
-        fetch(`https://nominatim.openstreetmap.org/search.php?q=${address}&format=jsonv2`)
+        
+        await fetch(`https://nominatim.openstreetmap.org/search.php?q=${address}&format=jsonv2`)
             .then(response => response.json())
             .then(data => {
-                // console.log(data)
+                check.disabled = false;
+                if (data.length === 0) {
+                    locationAlert.className = 'alert alert-danger';
+                    locationAlert.innerHTML = 'Địa chỉ không hợp lệ, không thể mở bản đồ';
+                    type.value = 'Không xác định';
+                    type2.value = 'Không xác định';
+                    fullAddress.value = '';
+                    fullAddress2.value =    '';
+                    importance.value = '';
+                    place_rank.value = '';
+                    return
+                }
+                overlay.classList.add('show')
                 const latValue = parseFloat(data[0].lat)
                 const lonValue = parseFloat(data[0].lon)
                 lat.value = latValue
@@ -128,9 +172,9 @@ function triggerEvents(){
                 }).addTo(map)
 
                 if (marker) {
-                    marker.setLatLng([latValue, lonValue]);
+                    marker.setLatLng([latValue, lonValue], {icon: customIcon1})
                 } else {
-                    marker = L.marker([latValue, lonValue]).addTo(map);
+                    marker = L.marker([latValue, lonValue], {icon: customIcon1}).addTo(map).bindTooltip("Địa chỉ tìm thấy", { permanent: true, direction: "top" })
                 }
 
                 let marker2 = null;
@@ -145,7 +189,7 @@ function triggerEvents(){
                     if (marker2) {
                         marker2.setLatLng(e.latlng);
                     } else {
-                        marker2 = L.marker(e.latlng).addTo(map);
+                        marker2 = L.marker(e.latlng, {icon : customIcon2}).addTo(map).bindTooltip("Địa chỉ bạn chọn", { permanent: true, direction: "top" })
                     }
 
                     fetch(`https://flood-api.open-meteo.com/v1/flood?latitude=${loncation.lat}&longitude=${loncation.lng}&daily=river_discharge,river_discharge_max&models=forecast_v4`)
@@ -173,16 +217,20 @@ function triggerEvents(){
                     .then(data => {
                         const displayName = data.display_name.toLowerCase();
                         const s = `${ward.value}, ${district.value}, ${city.value}`.toLowerCase().trim()
-                        // console.log(data.category)
-                        console.log(displayName)
-                        console.log(s)
+                        console.log(data.type)
+
+                        // console.log(displayName)
+                        // console.log(s)
                         const check = displayName.includes(ward.value.toLowerCase()) && displayName.includes(district.value.toLowerCase()) && displayName.includes(city.value.toLowerCase());
                         // if (check) {
                             locationAlert.className = 'alert alert-success';
                             locationAlert.innerHTML = 'Tọa độ hợp lệ';
-                            type.value = typeLabel[data.type] || 'Không xác định';
+                            type.value = typeLabel[data.type][0] || 'Không xác định';
+                            type2.value = typeLabel[data.type][0] || 'Không xác định';
                             fullAddress.value = data.display_name;
                             fullAddress2.value = data.display_name;
+                            importance.value = data.importance;
+                            place_rank.value = data.place_rank;
 
                         // } else {
                         //     locationAlert.className = 'alert alert-danger';
@@ -197,9 +245,11 @@ function triggerEvents(){
                 });
             })
             .catch(error => {
+                check.disabled = false;
                 console.error('Error fetching address:', error)
                 locationAlert.className = 'alert alert-danger';
-                locationAlert.innerHTML = 'Địa chỉ không hợp lệ';
+                locationAlert.innerHTML = 'Địa chỉ không hợp lệ, không thể mở bản đồ';
+
             })
     })
 }

@@ -67,37 +67,35 @@
             <div class="col-md-6 mt-3">
                 <button type="button" class="btn btn-success" id="check-location">Chọn từ bản đồ</button>
             </div>
-            <div class="">
+
+            <div class="col-md-9">
                 <label for="full-address2" class="form-label">Địa chỉ phát hiện</label>
                 <input type="text" name="full-address2" class="form-control" id="full-address2" required  disabled>
                 <div class="invalid-feedback">
                     Vui lòng mở bản đồ để chọn địa chỉ.
                 </div>
             </div>
-            <div style="height: 0; overflow: hidden;">
-                <input type="text" class="form-control" id="type" name="type" required>
-                <input type="text" class="form-control" id="latitude" name="lat" required>
-                <input type="text" class="form-control" id="longitude" name="lon"  >
-                <input type="text" class="form-control" name="flood" id="hard" required >
-                <input type="text" name="full-address" class="form-control" id="full-address" required >
-            </div>
+
             
-            <!-- 
+            
+            
             <div class="col-md-3">
-                <label for="latitude" class="form-label">Vĩ độ</label>
-                <input type="text" class="form-control" id="latitude" required disabled>
+                <label for="type2" class="form-label">Khu vực</label>
+                <input type="text" class="form-control" id="type2" required disabled>
                 <div class="invalid-feedback">
                     Vui lòng mở bản đồ để chọn địa chỉ.
                 </div>
-            </div> -->
+            </div>
         </div>
-
-
-        <!-- <div class="mb-3">
-            <label for="images" class="form-label">Hình ảnh</label>
-            <input name="images" class="form-control" type="file" id="images" accept="image/*" multiple required>
-        </div> -->
-
+        <div style="height: 0; overflow: hidden;">
+            <input type="text" class="form-control" id="type" name="type" required>
+            <input type="text" class="form-control" id="latitude" name="lat" required>
+            <input type="text" class="form-control" id="longitude" name="lon"  >
+            <input type="text" class="form-control" name="flood" id="hard" required >
+            <input type="text" name="full-address" class="form-control" id="full-address" required >
+            <input type="text" name="place_rank" class="form-control" id="place_rank" required >
+            <input type="text" name="importance" class="form-control" id="importance" required >
+        </div>
         <div class="mb-3">
             <label for="description" class="form-label" >Mô tả</label>
             <textarea name="description" class="form-control" id="description" rows="3"></textarea>

@@ -1,17 +1,18 @@
 {% extends 'layouts/base.html' %}
 
 {% block css%}
+
 {% endblock %}
 
 {% block title %}
-    Thêm địa chỉ trọ mới
+    Sửa phòng
 {% endblock %}
-
 {% block content %}
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
-    <h1>Thêm phòng mới cho trọ {{ house.name }}</h1>
 
-    <form action="{{ url_for('addRoom', id=house.id) }}" method="post" enctype="multipart/form-data" class="row g-3">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <h1>Sửa phòng mới cho trọ {{ house.name }}</h1>
+
+    <form action="{{ url_for('editRoom', id=house.id) }}" method="post" enctype="multipart/form-data" class="row g-3">
         <div class="form-group col-md-4">
             <label for="name">Tên phòng:</label>
             <input type="text" class="form-control" id="name" name="name" required placeholder="Phòng 1"
@@ -33,10 +34,10 @@
                 <option value="nhanguyencan">Nhà nguyên căn</option>
             </select>
         </div>
-        <div class="form-group col-md-5">
+        <!-- <div class="form-group col-md-5">
             <label for="image">Hình ảnh:</label>
             <input type="file" class="form-control" id="images" name="images" required multiple accept="image/*">
-        </div>
+        </div> -->
         <div class="form-group">
             <label for="description">Mô tả:</label>
             <textarea class="form-control" id="description" name="description" rows="4" required>
@@ -59,8 +60,10 @@
             </select>
             <span>*Chỉ chọn "Có" nếu muốn tìm người ở ghép</span>
         </div>
-        <button type="submit" class="btn btn-primary">Thêm phòng</button>
-
+        <div class="form-group col-md-6 d-flex justify-content-center gap-3">
+            <button type="submit" class="btn btn-primary w-100">Lưu</button>
+            <a href="{{ url_for('seeRooms', id=house.id) }}" class="btn btn-secondary w-100">Hủy</a>
+        </div>
         
     </form>
 
@@ -69,18 +72,17 @@
 
 {% block scripts %}
     <script>
-        {% if last_room %}
-        document.getElementById('name').value = "Phòng số {{ last_room.id }}";
-        document.getElementById('area').value = {{ last_room.area }};
-        document.getElementById('price').value = {{ last_room.price }};
-        document.getElementById('type').value = "{{ last_room.type }}";
-        document.getElementById('description').value = `{{ last_room.description }}`
-        document.getElementById('numMax').value = {{ last_room.max_people }};
-        document.getElementById('numCur').value = {{ last_room.current_people }};
-        document.getElementById('matching').value = "{{ 'true' if last_room.matching else 'false' }}";
+        {% if room %}
+        document.getElementById('name').value = "{{ room.name }}";
+        document.getElementById('area').value = {{ room.area }};
+        document.getElementById('price').value = {{ room.price }};
+        document.getElementById('type').value = "{{ room.type }}";
+        document.getElementById('description').value = `{{ room.description }}`
+        document.getElementById('numMax').value = {{ room.max_people }};
+        document.getElementById('numCur').value = {{ room.current_people }};
+        document.getElementById('matching').value = "{{ 'true' if room.matching else 'false' }}"
         {% endif %}
     </script>
     <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
 {% endblock %}
-

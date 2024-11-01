@@ -1,0 +1,59 @@
+{% extends 'layouts/base.html' %}
+
+{% block css%}
+    <link rel="stylesheet" href="{{url_for('static', filename='css/addRenter.css')}}">
+{% endblock %}
+
+{% block title %}
+    Thay đổi địa chỉ trọ
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <h1>Thêm địa chỉ trọ mới</h1>
+    <form action="#" method="post" id="form" class="row g-3" enctype="multipart/form-data">
+        <div class="col-md-9">
+            <label for="name" class="form-label">Tên nhà trọ</label>
+            <input type="text" class="form-control" id="name" required placeholder="Nhà trọ ..." name="name" value="{{house.name}}">
+            <div class="invalid-feedback">
+                Vui lòng nhập tên nhà trọ.
+            </div>
+        </div>       
+
+        <div class="col-md-9">
+            <label for="full-address2" class="form-label">Địa chỉ phát hiện</label>
+            <input type="text" name="full-address2" class="form-control" id="full-address2" required  disabled value="{{house.full_address}}">
+            <div class="invalid-feedback">
+                Vui lòng mở bản đồ để chọn địa chỉ.
+            </div>
+            <p>Bạn không thể thông tin liên quan đến địa chỉ</p>
+        </div>      
+            
+        <div class="col-md-3">
+            <label for="type2" class="form-label">Khu vực</label>
+            <input type="text" class="form-control" id="type2" required disabled value="{{house.type}}">
+            <div class="invalid-feedback">
+                Vui lòng mở bản đồ để chọn địa chỉ.
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            <label for="description" class="form-label" >Mô tả</label>
+            <textarea name="description" class="form-control" id="description" rows="3">{{house.description}}</textarea>
+        </div>
+        
+        <div class="row g-2 mb-3">
+            <div class="col-md-2 ">
+                <button type="submit" class="btn btn-primary w-100" id="submit">Lưu</button>
+            </div>
+            <div class="col-md-2">
+                <a href="{{ url_for('seeRooms', id=house.id) }}" class="btn btn-danger w-100">Quay lại</a>
+            </div>
+        </div>
+    </form>
+   
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+{% endblock %}

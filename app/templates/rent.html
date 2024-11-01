@@ -16,24 +16,38 @@
         <a href="{{ url_for('addRenter') }}" class="btn btn-primary">Thêm trọ</a>
     </div>
     <div class="rental-list">
-        {% for house in houses %}
-            <div class="rental-item">
-                <h2>{{ house.name }}</h2>
-                <p>Địa chỉ: {{ house.address }}</p>
-                <p>Số lượt ghé: 0 </p>
-                <p>Số lượng phòng: {{house.n}}</p>
-                <div class="actions">
-                    <a href="{{ url_for('seeRooms', id=house.id) }}" class="btn btn-secondary">Quản lý phòng</a>
-                    <a href="{{ url_for('deleteHouse', id=house.id) }}" class="btn btn-danger">Xóa</a>
-                </div>
-            </div>
-        {% endfor %}
+        
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>STT</th>
+                <th>Tên nhà trọ</th>
+                <th>Địa chỉ</th>
+                <th>Số lượt ghé</th>
+                <th>Số lượng phòng</th>
+                <th>Hành động</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for house in houses %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ house.name }}</td>
+                    <td style="width: 40%;">{{ house.full_address }}</td>
+                    <td>0</td>
+                    <td>{{ house.n }}</td>
+                    <td>
+                        <a href="{{ url_for('seeRooms', id=house.id) }}" class="btn btn-secondary">Quản lý phòng</a>
+                        <a href="{{ url_for('deleteHouse', id=house.id) }}" class="btn btn-danger">Xóa</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
     </div>
 {% endblock %}
 
 {% block scripts %}
     <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-+T2lXZV5VXt+2Zl2+3+L8v+u3l7lCt5xjzj3h9b5ZpA=" crossorigin=""></script> -->
-    <script src="{{url_for('static', filename='js/lookup.js')}}"></script>
-    <script src="{{url_for('static', filename='js/address.js')}}"></script>
 {% endblock %}
 

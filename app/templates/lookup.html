@@ -16,8 +16,10 @@
         Bạn là sinh viên trường <strong id="school">{{university}}</strong>
     </div>
     <hr>
-    <form action="#" method="post" id="form" class="row g-3" enctype="multipart/form-data">
-        <div class="col-md-9">
+    <form id="form" class="row g-3" enctype="multipart/form-data">
+        <input type="text" name="lat" id="lat" hidden>
+        <input type="text" name="lon" id="lon" hidden>
+        <div class="col-md-10">
             <label for="facilities" class="form-label">Chọn gần cơ sở</label>
             <select name="facilities" id="facilities" class="form-select">
                 <option value="">Không chọn</option>
@@ -27,7 +29,7 @@
                 Vui lòng nhập tên nhà trọ.
             </div>
         </div>
-        <div class="col-md-4">
+        <div class="col-md-3">
             <label for="city" class="form-label">Tỉnh / Thành phố</label>
             <select name="city" class="form-select" id="city">
                 <option selected disabled value="">Chọn...</option>
@@ -54,26 +56,68 @@
                 Vui lòng chọn một xã phường hợp lệ.
             </div>
         </div>
-        <button type="submit" class="btn btn-primary">Tra cứu</button>
-    </form>
-    <hr>
-    <div class="row row-cols-1 row-cols-md-4 g-4">
-        {% for item in items %}
-        <div class="col">
-            <div class="card h-100">
-                <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.name }}">
-                <div class="card-body">
-                    <h5 class="card-title">{{ item.name }}</h5>
-                    <p class="card-text">{{ item.address }}</p>
-                    <p class="card-text">Điểm đánh giá: {{ item.rating }}</p>
-                    {% if item.distance %}
-                    <p class="card-text">Khoảng cách đến cơ sở: {{ item.distance }} km</p>
-                    {% endif %}
-                </div>
+        <div class="col-md-3">
+            <label for="price" class="form-label">Giá thuê</label>
+            <input type="number" name="price" id="price" class="form-control" value="2000000">
+            <div class="invalid-feedback">
+                Vui lòng nhập giá thuê hợp lệ.
             </div>
         </div>
+        <button type="button" class="btn btn-primary"  onclick="search()">Tra cứu</button>
+    </form>
+    <hr>
+
+    {% if rooms %}
+    <h3>Kết quả tra cứu</h3>
+    <div class="row">
+        {% for room in rooms %}
+            <div class="col-md-4">
+                <div class="card mb-4">
+                    {% if room.images and room.house.distance < 25 %}
+                        <img src="{{ room.images[0].url }}" class="card-img-top" alt="...">
+                    {% else %}
+                        <img src="/static/default.jpg" class="card-img-top" alt="No image available">
+                    {% endif %}
+                    <div class="card-body">
+                        <h6 class="card-title">{{ room.name }}</h6>
+                        <p class="card-text">{{ room.house.street }}, {{ room.house.ward }}, {{ room.house.district }}, {{ room.house.city }}</p>
+                        <a href="/detail/{{ room.id }}" class="btn btn-primary">Xem thử</a>
+                        <span class="badge bg-primary">{{ room.house.distance}} km </span>
+                        <span class="badge bg-primary">Khả năng ngập xung quanh: {{ room.house.flood }} </span>
+                        <p>Giá thuê: <strong>{{ room.price }} VND</strong> / tháng</p>
+                        
+                    </div>
+                </div>
+            </div>
         {% endfor %}
     </div>
+
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            {% if page > 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('lookup', page=page-1) }}" aria-label="Previous">
+                        <span aria-hidden="true">&laquo;</span>
+                        <span class="sr-only">Previous</span>
+                    </a>
+                </li>
+            {% endif %}
+            {% for p in range(1, (total // per_page) + 2) %}
+                <li class="page-item {% if p == page %}active{% endif %}">
+                    <a class="page-link" href="{{ url_for('lookup', page=p) }}">{{ p }}</a>
+                </li>
+            {% endfor %}
+            {% if page < (total // per_page) + 1 %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('lookup', page=page+1) }}" aria-label="Next">
+                        <span aria-hidden="true">&raquo;</span>
+                        <span class="sr-only">Next</span>
+                    </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>
+{% endif %}
 {% endblock %}
 
 {% block scripts %}
