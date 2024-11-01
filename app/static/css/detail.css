@@ -1,0 +1,25 @@
+.gallery{
+    width: 100%;
+    aspect-ratio: 16/9;
+}
+.pass{
+    margin-top: 1rem;
+    margin-bottom: 1rem;
+}
+.align-items{
+    align-items: center;
+}
+
+.carousel-item{
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    overflow: hidden;
+}
+
+p{
+    margin: 0;
+}
+
+.pointer{
+    cursor: pointer;
+}

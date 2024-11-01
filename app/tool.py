@@ -155,7 +155,6 @@ def traficAPI(slat, slon, elat, elon):
 
     if not start_lat or not start_lon or not end_lat or not end_lon:
         return jsonify({'error': 'Missing required parameters'}), 400
-
     try:
         # Sử dụng OpenRouteService để lấy thông tin giao thông
         api_key = '5b3ce3597851110001cf6248341b48b6fe0d464685943bef1eb12692'
@@ -200,13 +199,9 @@ def search(lat,lon, price):
     lon = float(lon)
     houses = House.query.all()
     for h in houses:
-        if h.price > price:
-            houses.remove(h)
-            continue
         d = distance(lat, lon, h.lat, h.lon)
         h.distance = round(d*0.7, 2)
 
     houses = sorted(houses, key=lambda x: x.distance)
     return houses
 
-    

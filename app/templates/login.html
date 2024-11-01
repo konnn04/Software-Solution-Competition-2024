@@ -3,7 +3,7 @@
 {% block content %}
 
     
-    <div class="w-80 mt-5 mx-auto" style="max-width: 500px;">
+    <div class="w-80 mt-5 mx-auto back" style="max-width: 500px;">
        
         <h1>Đăng nhập</h1>
         <br>
@@ -34,5 +34,24 @@
         </form>
     </div>
 
+    <style>
+        body {
+            background-image: url({{ url_for('static', filename='img/bg.jpg') }});
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            backdrop-filter: blur(2px) brightness(0.3);
+            height: 100vh;
+        }
+        .back {
+            background-color: rgb(255, 255, 255);
+            padding: 30px;
+            border-radius: 1rem;
+        }
+
+        h5{
+            font-style: italic;
+        }
+    </style>
     
 {% endblock %}

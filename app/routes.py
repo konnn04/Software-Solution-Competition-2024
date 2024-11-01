@@ -186,6 +186,9 @@ def lookup():
         rooms = []
         for house in houses:
             room = Room.query.filter_by(house_id=house.id).all()
+            # for r in room:
+            #     if r.price > price:
+            #         room.remove(r)                  
             for r in room:
                 images = RoomImage.query.filter_by(room_id=r.id).all()
                 r.images = images
@@ -411,9 +414,26 @@ def rent():
 
 @app.route('/detail/<int:id>')
 def detail(id):
-    house = House.query.get(id)
-    images = RoomImage.query.join(Room).filter(Room.house_id == id).all()
-    return render_template('detail.html', title='Chi tiết', house=house, images=images)
+    room = Room.query.get(id)
+    house = House.query.get(room.house_id)
+    images = RoomImage.query.filter_by(room_id=id).all()
+    user_upload = User.query.get(house.renter)
+    t = {
+        'type': {
+            'phongtro': 'Phòng trọ',
+            'chungcu': 'Chung cư',
+            'nhanguyencan': 'Nhà nguyên căn',
+        }.get(room.type, 'Khác'),
+        'flood': {
+            0: 'Không',
+            1: 'Nhẹ',
+            2: 'Thấp',
+            3: 'Vừa',
+            4: 'Nặng'
+        }.get(house.flood, 'Không xác định'),
+        'matching': 'Có' if room.matching else 'Không',
+    }
+    return render_template('detail.html', title='Chi tiết', house=house, images=images, room=room, user = user_upload, t=t)
 
 def addRenterNew(request):
     name = request.form['name']

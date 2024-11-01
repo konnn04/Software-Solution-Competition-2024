@@ -103,7 +103,8 @@ const typeLabel = {
     'restaurant': ['Nhà hàng', 0.7],
     'parking': ['Bãi đậu xe', 0.5],
     'wastewater_plant': ['Nhà máy xử lý nước thải', 0.3],
-    'playground': ['Sân chơi', 0.8]
+    'playground': ['Sân chơi', 0.8],
+    'hamlet': ['Thôn xóm', 0.6],
 }
 
 function triggerEvents(){

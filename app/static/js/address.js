@@ -7,6 +7,7 @@ const Parameter = {
   responseType: "application/json", 
 };
 const promise = axios(Parameter);
+
 promise.then(function (result) {
   renderCity(result.data);
 });

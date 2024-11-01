@@ -1,7 +1,7 @@
 {% extends 'layouts/base.html' %}
 
 {% block css%}
-    <!-- <link rel="stylesheet" href="{{url_for('static', filename='css/addRenter.css')}}"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detail.css') }}">
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
 {% endblock %}
 
@@ -11,41 +11,101 @@
 
 {% block content %}
 
-<div class="row align-items-start">
-    <div class="col-7" style="background-color: aqua;">
-      
-        <div id="carouselExampleIndicators" class="carousel slide w-100 h-50">
-            <div class="carousel-indicators">
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="1" aria-label="Slide 2"></button>
-              <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="2" aria-label="Slide 3"></button>
+<div class="row align-items-start mt-5" style="justify-content: space-around;"> 
+    <div class="col-7 pass"> 
+        <div id="carouselExampleIndicators" class="carousel slide gallery" data-bs-ride="carousel"> 
+            <div class="carousel-indicators"> 
+            {% for image in images %} 
+                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="{{loop.index0}}" class="{% if loop.first %}active{% endif %}"></button>
+            {% endfor %}          
+            </div> 
+        <div class="carousel-inner"> 
+            {% for image in images %} 
+            <div class="carousel-item {% if loop.first %}active{% endif %}"> 
+                <img src="{{image.url}}" class="d-block w-100" alt="..."> 
+            </div> 
+            {% endfor %}        
+        </div> 
+        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev"> 
+        <span class="carousel-control-prev-icon" aria-hidden="true"></span> 
+        <span class="visually-hidden">Previous</span> 
+        </button> 
+        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next"> 
+        <span class="carousel-control-next-icon" aria-hidden="true"></span> 
+        <span class="visually-hidden">Next</span> 
+        </button> 
+        </div> 
+        <hr>
+        <div class="my-3"> 
+            <h5>Thông tin chung</h5>
+            <div class="row">
+                <div class="col-md-6">
+                    <p>Diện tích: <strong>{{room.area}} m<sup>2</sup></strong></p>
+                    <p>Loại phòng: <strong>{{t.type}}</strong></p>
+                    <p>Khả năng ngập: <strong>{{t.flood}}</strong></p>
+                </div>
+                <div class="col-md-6">
+                    <p>Loại: <strong>{{house.type}}</strong></p>
+                    <p>Tình trạng: <strong>{{room.current_people}}/{{room.max_people}}</strong></p>
+                    <p>Ở ghép: <strong>{{t.matching}}</strong></p>
+                </div>
             </div>
-            <div class="carousel-inner">
-              <div class="carousel-item active">
-                <img src="{{url_for('static', filename='file/mau-phong-tro-co-gac-lung-dep2022-5_1730362385.jpg')}}" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="{{url_for('static', filename='file/mau-phong-tro-co-gac-lung-dep2022-5_1730362385.jpg')}}" class="d-block w-100" alt="...">
-              </div>
-              <div class="carousel-item">
-                <img src="..." class="d-block w-100" alt="...">
-              </div>
-            </div>
-            <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
-              <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Previous</span>
-            </button>
-            <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
-              <span class="carousel-control-next-icon" aria-hidden="true"></span>
-              <span class="visually-hidden">Next</span>
-            </button>
         </div>
+        
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Mô tả
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+              <div class="accordion-body">
+                {{room.description}}
+              </div>
+            </div>
+          </div>
+        </div>
+    </div>         
+    <div class="col-4 "style="text-align: left; margin-top: 1rem; margin-bottom: 1rem;"> 
+        <div class = "row"> 
+            <div class="mb-3"> 
+                <h2> {{room.name}} </h2>
+            </div>
+            <div class="mb-3"> 
+                <p>Ngày thêm: <strong>{{ house.created_at.strftime('%d-%m-%Y') }}</strong></p>
+                <p>Địa chỉ: <strong>{{house.street + ', ' if house.street else ''}} {{house.ward + ', ' if house.ward else ''}} {{house.district + ', ' if house.district else ''}} {{house.city}}</strong><span class="badge bg-success mx-3 pointer" id="show-map">Xem bản đồ</span>
+                </p>
+            </div>
+            <div class = "d-flex pass"  style="justify-content: space-between; align-items: center;"> 
+                <div class="row">  
+                  <div class="d-flex" style="margin-top: 0.2rem; margin-bottom: 0;">
+                    <span class="badge bg-warning text-dark me-3 ">{{room.rate}} / 5</span>
+                    {% for i in range(1, 6) %}
+                        {% if i <= room.rate %}
+                            <i class="fas fa-star text-warning"></i>
+                        {% else %}
+                            <i class="far fa-star text-warning"></i>
+                        {% endif %}
+                    {% endfor %}
+                  </div>
+                </div>
+            </div> 
+        <div class="" > 
+            <div role="status"> 
+                <h3 class="text-danger" style="margin-top: 0.4rem; margin-bottom: 0;">{{room.price}} VNĐ / tháng</h3>
+            </div> 
+            <span class="note text-muted">Đã bao gồm phí dịch vụ</span>
+        </div> 
+        <h5 class ="pass">Liên hệ: <strong>{{user.phone}} - {{user.name}}</strong></h5>
+        </div> 
+        <!-- <div class="row pass" style="margin-top: 1rem;"> 
+            <div class="mb-3"> 
+                
+            </div>
+        </div> -->
+    </div> 
+</div> 
 
-    </div>
-    <div class="col-3"style="background-color: red;">
-        <h2>Tên trọ</h2>
-        <button type="button" class="btn btn-success">2.100.000 đ</button>
-    </div>
-</div>
 
 {% endblock %}

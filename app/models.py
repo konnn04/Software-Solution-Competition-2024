@@ -56,7 +56,7 @@ class House(db.Model):
     
 class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    house_id = db.Column(db.Integer, db.ForeignKey('house.id'), nullable=False)
+    house_id = db.Column(db.Integer, db.ForeignKey('house.id', ondelete='CASCADE'), nullable=False)
     name = db.Column(db.String(120), nullable=False)
     price = db.Column(db.Float, nullable=False)
     area = db.Column(db.Float, nullable=False)
