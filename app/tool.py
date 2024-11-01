@@ -45,8 +45,8 @@ def flood_prediction(lat, lon):
         'average_interval': average_interval
     })
 
-def upload_image_to_server(image,name):
-    name = str(name)
+def upload_image_to_server(image):
+    # name = str(name)
     try:
         if image.filename == '':
             return {'error': 'No selected file'}

@@ -29,7 +29,7 @@
         </div>
         <div class="col-md-4">
             <label for="city" class="form-label">Tỉnh / Thành phố</label>
-            <select name="city" class="form-select" id="city" required>
+            <select name="city" class="form-select" id="city">
                 <option selected disabled value="">Chọn...</option>
             </select>
             <div class="invalid-feedback">
@@ -38,7 +38,7 @@
         </div>
         <div class="col-md-3">
             <label for="district" class="form-label">Quận / Huyện</label>
-            <select name="district" class="form-select" id="district" required>
+            <select name="district" class="form-select" id="district">
                 <option selected disabled value="">Chọn...</option>
             </select>
             <div class="invalid-feedback">
@@ -47,18 +47,38 @@
         </div>
         <div class="col-md-3">
             <label for="ward" class="form-label">Xã / Phường</label>
-            <select name="ward" class="form-select" id="ward" required>
+            <select name="ward" class="form-select" id="ward">
                 <option selected disabled value="">Chọn...</option>
             </select>
             <div class="invalid-feedback">
                 Vui lòng chọn một xã phường hợp lệ.
             </div>
         </div>
+        <button type="submit" class="btn btn-primary">Tra cứu</button>
     </form>
+    <hr>
+    <div class="row row-cols-1 row-cols-md-4 g-4">
+        {% for item in items %}
+        <div class="col">
+            <div class="card h-100">
+                <img src="{{ item.image_url }}" class="card-img-top" alt="{{ item.name }}">
+                <div class="card-body">
+                    <h5 class="card-title">{{ item.name }}</h5>
+                    <p class="card-text">{{ item.address }}</p>
+                    <p class="card-text">Điểm đánh giá: {{ item.rating }}</p>
+                    {% if item.distance %}
+                    <p class="card-text">Khoảng cách đến cơ sở: {{ item.distance }} km</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
 {% endblock %}
 
 {% block scripts %}
     <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-+T2lXZV5VXt+2Zl2+3+L8v+u3l7lCt5xjzj3h9b5ZpA=" crossorigin=""></script> -->
     <script src="{{url_for('static', filename='js/lookup.js')}}"></script>
+    <script src="{{url_for('static', filename='js/address.js')}}"></script>
 {% endblock %}
 

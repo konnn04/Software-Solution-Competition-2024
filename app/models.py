@@ -19,6 +19,8 @@ class House(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), nullable=False, unique=True)
 
+    renter = db.Column(db.Integer, db.ForeignKey('user.id', ondelete='SET NULL'), nullable=True)
+
     city = db.Column(db.String(120), nullable=False)
     district = db.Column(db.String(120), nullable=False)
     ward = db.Column(db.String(120), nullable=False)
@@ -34,15 +36,29 @@ class House(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())    
     
-class HouseImage(db.Model):
+class Room(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     house_id = db.Column(db.Integer, db.ForeignKey('house.id'), nullable=False)
-    url = db.Column(db.String(200), nullable=False)
+    name = db.Column(db.String(120), nullable=False)
+    price = db.Column(db.Float, nullable=False)
+    area = db.Column(db.Float, nullable=False)
+    description = db.Column(db.Text, nullable=True)
+    type = db.Column(db.String(120), nullable=True)
+    created_at = db.Column(db.DateTime, default=datetime.datetime.now())
+    updated_at = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())    
+
     
-    house = db.relationship('House', backref=db.backref('images', lazy=True))
+
+    def __repr__(self):
+        return '<Room %r>' % self.name
+
+class RoomImage(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    url = db.Column(db.String(200), nullable=False)
+    room_id = db.Column(db.Integer, db.ForeignKey('room.id'), nullable=False)
     
     def __repr__(self):
-        return '<House %r>' % self.name
+        return '<RoomImage %r>' % self.url
 
 # class Image(db.Model):
 #     id = db.Column(db.Integer, primary_key=True)

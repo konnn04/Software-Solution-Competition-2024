@@ -1,0 +1,38 @@
+{% extends 'layouts/base.html' %}
+
+{% block css%}
+    <!-- <link rel="stylesheet" href="{{url_for('static', filename='css/addRenter.css')}}"> -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+{% endblock %}
+
+{% block title %}
+    Tra cứu
+{% endblock %}
+
+{% block content %}
+
+    <h1>Quản lý phòng của trọ {{ house.name }}</h1>
+    <div>
+        <a href="{{ url_for('addRoom', id=house.id )}}" class="btn btn-primary">Thêm phòng</a>
+    </div>
+    <div class="rental-list">
+        {% for room in rooms %}
+            <div class="rental-item">
+                <h2>{{ room.name }}</h2>
+                <p>Diện tích: {{ room.area }} m2</p>
+                <p>Giá: {{ room.price }} đ</p>
+                <p>Trạng thái: {{ room.status }}</p>
+                <div class="actions">
+                    <a href="" class="btn btn-secondary">Sửa</a>
+                    <a href="{{ url_for('deleteRoom', id=room.id) }}" class="btn btn-danger">Xóa</a>
+                </div>
+            </div>
+        {% endfor %}
+{% endblock %}
+
+{% block scripts %}
+    <!-- <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-+T2lXZV5VXt+2Zl2+3+L8v+u3l7lCt5xjzj3h9b5ZpA=" crossorigin=""></script> -->
+    <script src="{{url_for('static', filename='js/lookup.js')}}"></script>
+    <script src="{{url_for('static', filename='js/address.js')}}"></script>
+{% endblock %}
+

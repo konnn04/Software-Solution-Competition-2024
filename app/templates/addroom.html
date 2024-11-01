@@ -1,0 +1,61 @@
+{% extends 'layouts/base.html' %}
+
+{% block css%}
+{% endblock %}
+
+{% block title %}
+    Thêm địa chỉ trọ mới
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+    <h1>Thêm phòng mới cho trọ {{ house.name }}</h1>
+
+    <form action="{{ url_for('addRoom', id=house.id) }}" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="name">Tên phòng:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+        </div>
+        <div class="form-group">
+            <label for="area">Diện tích (m²):</label>
+            <input type="number" class="form-control" id="area" name="area" required>
+        </div>
+        <div class="form-group">
+            <label for="price">Giá tiền (VND):</label>
+            <input type="number" class="form-control" id="price" name="price" required>
+        </div>
+        <div class="form-group">
+            <label for="type">Loại:</label>
+            <select class="form-control" id="type" name="type" required>
+                <option value="tro">Phòng trọ</option>
+                <option value="chungcu">Chung cư mini</option>
+                <option value="nhanguyencan">Nhà nguyên căn</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="image">Hình ảnh:</label>
+            <input type="file" class="form-control" id="images" name="images" required multiple accept="image/*">
+        </div>
+        <div class="form-group">
+            <label for="description">Mô tả:</label>
+            <textarea class="form-control" id="description" name="description" rows="4" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="num">Số phòng tương tự:</label>
+            <input type="number" class="form-control" id="num" name="num" required value="1" min="1" max="10">
+        </div>
+        <p>Sẽ tạo phòng tương tự theo số lượng, tên phòng sẽ được đánh số</p>
+        <button type="submit" class="btn btn-primary">Thêm phòng</button>
+
+        
+    </form>
+
+    
+{% endblock %}
+
+{% block scripts %}
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="{{url_for('static', filename='js/address.js')}}"></script>
+    <script src="{{url_for('static', filename='js/addRenter.js')}}"></script>
+{% endblock %}
+

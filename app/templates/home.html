@@ -12,16 +12,16 @@
     {% endif %}
     <h3>Tất cả trọ đang có</h3>
     <div class="row row-cols-1 row-cols-md-4 g-3">
-        {% for house in houses %}
+        {% for room in rooms %}
         <div class="col">
             <div class="card h-100">
-                {% if house.images and house.images[0] %}
-                <img src="{{house.images[0].url}}" class="card-img-top" alt="...">
+                {% if room.images and room.images[0] %}
+                <img src="{{room.images[0].url}}" class="card-img-top" alt="...">
                 {% endif %}
                 <div class="card-body">
-                    <h5 class="card-title">{{house.name}}</h5>
-                    <p class="card-text">{{house.street}}, {{house.ward}}, {{house.district}}, {{house.city}}</p>
-                    <a href="/detail/{{house.id}}" class="btn btn-primary">Xem thử</a>
+                    <h5 class="card-title">{{room.name}}</h5>
+                    <p class="card-text">{{room.house.street}}, {{room.house.ward}}, {{room.house.district}}, {{room.house.city}}</p>
+                    <a href="/detail/{{room.id}}" class="btn btn-primary">Xem thử</a>
                 </div>
             </div>
         </div>
