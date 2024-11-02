@@ -8,9 +8,11 @@ class Auth:
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
     USER_INFO = 'https://www.googleapis.com/oauth2/v2/userinfo'
     SCOPE = ['https://www.googleapis.com/auth/userinfo.profile', 'https://www.googleapis.com/auth/userinfo.email']
-# class Config:
-#     APP_NAME = "Test Google Login"
-#     SECRET_KEY = os.environ.get("SECRET_KEY") or "somethingsecret" 
+class Config:
+    APP_NAME = "Test Google Login"
+    SECRET_KEY = os.environ.get("SECRET_KEY") or "you-will-never-guess" 
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or 'sqlite:///app.db'
+    SQLALCHEMY_TRACK_MODIFICATIONS = False
 # class DevConfig(Config):
 #     DEBUG = True
 #     SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(basedir, "test.db")
