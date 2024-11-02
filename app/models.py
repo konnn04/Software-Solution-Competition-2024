@@ -15,6 +15,8 @@ class User(db.Model, UserMixin):
     role = db.Column(db.String(120), nullable=False)
     onupdate=datetime.datetime.now()
 
+    is_admin = db.Column(db.Boolean, default=False)
+
     username = db.Column(db.String(120), nullable=False, unique=False)
     phone = db.Column(db.String(120), nullable=True)
     address = db.Column(db.String(120), nullable=True)

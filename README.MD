@@ -24,8 +24,8 @@
 1. **Clone repository:**
 
     ```sh
-    git clone https://github.com/konnn04/GPPM-2024.git
-    cd GPPM-2024
+    git clone https://github.com/your-repo/web-tim-tro.git
+    cd web-tim-tro
     ```
 
 2. **Tạo virtual environment và kích hoạt:**
@@ -67,13 +67,16 @@
 
     Mở trình duyệt và truy cập `https://127.0.0.1:5000`
 
+3. **Truy cập Flask-Admin:**
+
+    Mở trình duyệt và truy cập `https://127.0.0.1:5000/admin` để truy cập vào bảng điều khiển quản trị của Flask-Admin.
+
 ## Các API Được Sử Dụng
 
 - **Google OAuth 2.0:** Để xác thực người dùng thông qua tài khoản Google.
-- **OpenStreetMap Nominatim API:** Để tìm kiếm và lấy thông tin địa lý, vẽ bản đồ.
+- **OpenStreetMap Nominatim API:** Để tìm kiếm và lấy thông tin địa lý.
 - **OpenRouteService API:** Để lấy thông tin giao thông và tính toán khoảng cách.
 - **flood-api.open-meteo.com**: Để lấy thông tin về nguy cơ lũ lụt.
-
 
 ## Các Chức Năng Chính
 
@@ -92,6 +95,10 @@
 - **Đánh giá và nhận xét:**
   - Người dùng có thể đánh giá và nhận xét về các phòng trọ.
   - Hiển thị các đánh giá và nhận xét từ người dùng khác.
+
+## Đóng Góp
+
+Nếu bạn muốn đóng góp cho dự án, vui lòng tạo pull request hoặc mở issue trên GitHub.
 
 ## Liên Hệ
 

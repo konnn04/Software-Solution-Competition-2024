@@ -17,5 +17,15 @@ with app.app_context():
         address = '123 Example Street',
         dob = datetime(1999, 1, 1)
     )
+
+    admin = User(
+        username='admin',
+        password=generate_password_hash('admin'),
+        email = 'admin@admin.com',
+        name = 'Admin',
+        role = 'admin',
+        is_admin = True
+    )
+
     db.session.add(user)
     db.session.commit()
