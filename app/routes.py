@@ -46,7 +46,7 @@ def home():
     if current_user.is_authenticated:
         university = getSchoolName(current_user.email)
 
-
+    room.sort(key=lambda x: x.created_at, reverse=True)
     return render_template('home.html', title='Trang chủ', rooms = room, university = university)
 
 @app.route('/register', methods=['POST','GET'])
@@ -66,7 +66,7 @@ def register():
         f_email = User.query.filter_by(email=email).first()
         f_username = User.query.filter_by(username=username).first()
         f_same = password == password2
-        f_safe = password.isalnum() and len(password) >= 8
+        f_safe = True
         f_enough_age = (datetime.now().date() - datetime.strptime(dob, '%Y-%m-%d').date()).days >= 18*365
 
         if f_email:
@@ -173,14 +173,14 @@ def lookup():
     else:
         university = "Đại học Việt Nam"
     page = request.args.get('page', 1, type=int)
-    per_page = 15
+    per_page = 10
     lat = request.args.get('lat')
     lon = request.args.get('lon')
 
     city = request.args.get('city')
     district = request.args.get('district')
     ward = request.args.get('ward')
-    price = int(request.args.get('price', 0))
+    price = int(request.args.get('price', 500000000))
 
     # print(lat, lon, city, district, ward, price)
     point = None
@@ -222,7 +222,11 @@ def lookup():
 
         rooms += room
     # Phân trang kết quả
-    rooms.sort(key=lambda x: (x.house.distance, -x.rate))
+    rooms.sort(key=lambda x: -composite_score(
+        distance= x.house.distance, 
+        price=x.price,
+        rate=x.rate 
+    ))
     total = len(rooms)
     start = (page - 1) * per_page
     end = start + per_page
@@ -418,14 +422,15 @@ def detail(id):
         }.get(room.type, 'Khác'),
         'flood': {
             0: 'Không',
-            1: 'Nhẹ',
+            1: 'Hiếm khi',
             2: 'Thấp',
             3: 'Vừa',
             4: 'Nặng'
         }.get(house.flood, 'Không xác định'),
         'matching': 'Có' if room.matching else 'Không',
         'safe': 'Không xác định' if house.importance > 1 else 'Khá' if house.importance > 0.5 else 'Tốt',
-        'rank': 'Đông đúc' if house.place_rank > 26 else 'Bình thường' if house.place_rank > 22 else 'Thưa thớt'
+        'rank': 'Đông đúc' if house.place_rank > 26 else 'Bình thường' if house.place_rank > 22 else 'Thưa thớt',
+        'trafic': evaluate_traffic(house.lat, house.lon)
     }
     caculate_rate = calculateRate(house, room)
     reviews = Review.query.filter_by(house_id = house.id).all()
@@ -503,6 +508,38 @@ def matchroom():
         university = None
     return render_template('matchroom.html', title='Phòng trọ phù hợp', university=university)
 
+@app.route('/api/rooms')
+def api_rooms():
+    tf = request.args.get('topleft')
+    br = request.args.get('bottomright')
+    zoom = request.args.get('zoom')
+    if not tf or not br or not zoom:
+        return jsonify([])
+
+    houses = getInBound(tf, br, zoom)
+    house_list = []
+    for house in houses:
+        house.first_room= Room.query.filter_by(house_id=house.id).first()
+        h = {
+            'id': house.id,
+            'name': house.name,
+            'lat': house.lat,
+            'lon': house.lon,
+            'city': house.city,
+            'district': house.district,
+            'ward': house.ward,
+            'street': house.street,
+            'first_room': {
+                'id': house.first_room.id,
+                'name': house.first_room.name,
+                'price': house.first_room.price,
+                'area': house.first_room.area,
+                'image': RoomImage.query.filter_by(room_id=house.first_room.id).first().url
+            }
+        }
+        house_list.append(h)
+    return jsonify(house_list)
+
 def addRenterNew(request):
     name = request.form['name']
     city = request.form['city']
@@ -547,8 +584,22 @@ def addRenterNew(request):
     # db.session.add(house_image)
     # db.session.commit()
     
-
-
+def getInBound(tf, br, zoom):
+    tf = tf.split(',')
+    br = br.split(',')
+    tf = {
+        'lat': float(tf[0]),
+        'lon': float(tf[1])
+    }
+    br = {
+        'lat': float(br[0]),
+        'lon': float(br[1])
+    }
+    houses = House.query.all()
+    for house in houses:
+        house.distance = distance(tf['lat'], tf['lon'], house.lat, house.lon)
+    houses = list(filter(lambda x: x.distance < 8, houses))
+    return houses
     
 
 

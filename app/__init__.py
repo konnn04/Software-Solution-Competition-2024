@@ -5,6 +5,7 @@ from flask_login import LoginManager, current_user
 from app.config import Auth
 from oauthlib.oauth2 import WebApplicationClient
 from requests_oauthlib import OAuth2Session
+from werkzeug.security import generate_password_hash
 
 from flask_admin import Admin, AdminIndexView
 from flask_admin.contrib.sqla import ModelView
@@ -44,11 +45,17 @@ class MyModelView(ModelView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
+    
+class UserModelView(MyModelView):
+    def on_model_change(self, form, model, is_created):
+        if form.password.data:
+            model.password = generate_password_hash(form.password.data)
+        return super(UserModelView, self).on_model_change(form, model, is_created)
 
 from app.models import User, House, Room, RoomImage, Review
 
 admin = Admin(app, name='Quản trị', template_mode='bootstrap4', index_view=MyAdminIndexView())
-admin.add_view(ModelView(User, db.session))
+admin.add_view(UserModelView(User, db.session))
 admin.add_view(ModelView(House, db.session))
 admin.add_view(ModelView(Room, db.session))
 admin.add_view(ModelView(RoomImage, db.session))

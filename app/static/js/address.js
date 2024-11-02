@@ -17,6 +17,7 @@ function renderCity(data) {
     citis.options[citis.options.length] = new Option(x.Name, x.Name);
   }
   citis.onchange = function () {
+    districts.onchange();
     district.length = 1;
     ward.length = 1;
     if(this.value != ""){
@@ -27,6 +28,7 @@ function renderCity(data) {
       }
     }
   };
+  
   district.onchange = function () {
     ward.length = 1;
     const dataCity = data.filter((n) => n.Name === citis.value);
@@ -38,4 +40,15 @@ function renderCity(data) {
       }
     }
   };
+  citis.onclick = function () {
+    citis.onchange();
+  }
+  districts.onclick = function () {
+    districts.onchange();
+  }
+  // wards.onclick = function () {
+  //   citis.onchange();
+  //   districts.onchange();
+  // }
+
 }

@@ -119,16 +119,26 @@ def getFacilities(school):
     return {   }
 
 def getLocation(address):
-    url = "https://nominatim.openstreetmap.org/search.php?q=" + address + "&format=json".lower()
-    # print(url)
-    response = requests.get(url)
-    if response.status_code != 200:
-        return {'error': 'Failed to get location'}  
-    response = response.json()
-    if len(response) > 0:
-        print(response)
-        return {'lat': response[0]['lat'], 'lon': response[0]['lon']}
-    return {'error': 'Failed to get location'}
+    url = "https://nominatim.openstreetmap.org/search.php?q=" + address.replace(" ", "%20") + "&format=json"
+    print(url)
+    try:
+        response = requests.get(url)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+        response_json = response.json()
+        if len(response_json) > 0:
+            print(response_json)
+            return {'lat': response_json[0]['lat'], 'lon': response_json[0]['lon']}
+        return {'error': 'No results found'}
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return {'error': f"Failed to fetch data: {e}"}
+    except requests.exceptions.JSONDecodeError as e:
+        print(f"JSON decode error: {e}")
+        print(f"Response content: {response.content}")
+        return {'error': 'Failed to process data'}
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return {'error': 'Failed to process data'}
 
 def distance(lat1, lon1, lat2, lon2):
     R = 6371.0
@@ -145,7 +155,7 @@ def distance(lat1, lon1, lat2, lon2):
     c = 2 * math.atan2(math.sqrt(a), math.sqrt(1 - a))
 
     distance = R * c
-    return distance
+    return round(distance, 1)
 
 def traficAPI(slat, slon, elat, elon):
     start_lat = slat
@@ -194,29 +204,26 @@ def traficAPI(slat, slon, elat, elon):
 
 
 
-def search(lat,lon, city=None, district=None, ward=None):
+def search(lat, lon, city=None, district=None, ward=None):
     lat = float(lat)
     lon = float(lon)
     houses = House.query.all()
+    filtered_houses = []
+
     for h in houses:
         if city and h.city != city:
-            houses.remove(h)
             continue
         if district and h.district != district:
-            houses.remove(h)
             continue
         if ward and h.ward != ward:
-            houses.remove(h)
             continue
         d = distance(lat, lon, h.lat, h.lon)
-        
-        h.distance = round(d*0.2 + d, 2)
-        if  h.distance >50:
-            houses.remove(h)
-            continue
+        h.distance = round(d * 0.2 + d, 2)
+        if h.distance <= 50:
+            filtered_houses.append(h)
 
-    houses = sorted(houses, key=lambda x: x.distance)
-    return houses
+    filtered_houses.sort(key=lambda x: x.distance)
+    return filtered_houses
 
 def getLocationRate(type):
     return {
@@ -266,6 +273,8 @@ def getLocationRate(type):
         'Nhà máy xử lý nước thải': 0.3,
         'Sân chơi': 0.8,
         'Thôn xóm': 0.6,
+        'Quán bar': 0.7,
+        'Nghiên cứu': 0.8,
     }.get(type, 0.5)
 
 
@@ -290,4 +299,57 @@ def calculateRate(house,room):
     price_avg = sum(price_rates)/len(price_rates) if len(price_rates) > 0 else 0
 
     rate = (safe_avg + env_avg + traffic_avg + flood_avg + price_avg)/5
-    return rate
+    return round(rate,1)
+
+
+def composite_score(distance, rate, price):
+    distance_weight = 0.3
+    rate_weight = 0.5
+    price_weight = 0.2
+
+    distance_score = max(0, 15 - distance) / 15 # Tối đa 15km
+    rate_score = rate / 4.9 # Từ 0 đến 5
+    price_score = price / 8000000
+    return round(distance_score * distance_weight + rate_score * rate_weight + price_score * price_weight, 2)
+
+def evaluate_traffic(lat, lon, radius=8):
+    try:
+        # Sử dụng OpenRouteService để lấy thông tin giao thông
+        api_key = '5b3ce3597851110001cf6248341b48b6fe0d464685943bef1eb12692'
+        url = f"https://api.openrouteservice.org/v2/directions/driving-car?api_key={api_key}"
+        headers = {"Content-Type": "application/json"}
+        
+        payload = {
+            "coordinates": [
+                [float(lon), float(lat)],
+                [float(lon) + 0.072, float(lat)],  # 0.072 độ tương đương khoảng 8 km
+                [float(lon) - 0.072, float(lat)],
+                [float(lon), float(lat) + 0.072],
+                [float(lon), float(lat) - 0.072]
+            ],
+            "extra_info": ["traffic"]
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()  # Raise an HTTPError for bad responses (4xx and 5xx)
+
+        data = response.json()
+        traffic_info = data.get('routes', [])[0].get('segments', [])[0].get('steps', [])
+
+        # Đánh giá độ kẹt xe dựa trên thông tin giao thông
+        congestion_levels = []
+        for step in traffic_info:
+            congestion = step.get('traffic', {}).get('congestion', 'unknown')
+            congestion_levels.append(congestion)
+
+        return jsonify({'congestion_levels': congestion_levels})
+    except requests.exceptions.RequestException as e:
+        print(f"Request error: {e}")
+        return jsonify({'error': f"Failed to fetch data: {e}"}), 500
+    except requests.exceptions.JSONDecodeError as e:
+        print(f"JSON decode error: {e}")
+        print(f"Response content: {response.content}")
+        return jsonify({'error': 'Failed to process data'}), 500
+    except Exception as e:
+        print(f"Unexpected error: {e}")
+        return jsonify({'error': 'Failed to process data'}), 500

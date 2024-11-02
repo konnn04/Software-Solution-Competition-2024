@@ -26,6 +26,6 @@ with app.app_context():
         role = 'admin',
         is_admin = True
     )
-
+    db.session.add(admin)
     db.session.add(user)
     db.session.commit()

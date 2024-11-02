@@ -5,13 +5,19 @@
     {% if user is none %}
         <p>Để xem phòng trọ gần trường bạn, vui lòng <a href="/login">đăng nhập</a></p>
     {% else %}
-        <p>Chào mừng bạn đến với trang web của chúng tôi, {{user.name}}. Sinh viên trường {{university}}</p>
+        <p>Chào mừng bạn đến với trang web của chúng tôi, {{user.name}}. 
+            {% if user.role == 'student' %}
+            Sinh viên trường {{university}} 
+            {% endif %}
+             </p>
         
         
 
     {% endif %}
     <h3>Tất cả trọ đang có</h3>
-    <div class="row row-cols-1 row-cols-md-3 g-3">
+    <p>Sau đây là danh sách các phòng trọ vừa được đăng tải</p>
+    <br>
+    <div class="row row-cols-1 row-cols-md-3 g-3" style="max-height: 80vh; overflow-y: auto;">
         {% for room in rooms %}
         <div class="col">
             <div class="card h-100">
@@ -21,12 +27,65 @@
                 <div class="card-body">
                     <h5 class="card-title">{{room.name}}</h5>
                     <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
-                    <a href="/detail/{{room.id}}" class="btn btn-primary">Xem thử</a>
+                    <a href="/detail/{{room.id}}" class="btn btn-primary">Chi tiết</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
 
+    <div class="d-flex mt-3">
+        <h3>Bản đồ khu vực</h3>
+    </div>
+
+    <div id="map" style="height: 80vh; width: 100%;"></div>
+
     
+    
+{% endblock %}
+
+
+
+{% block scripts %}
+    <script>
+        var map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        {% for room in rooms %}
+        L.marker([{{room.house.lat}}, {{room.house.lon}}]).addTo(map)
+            .bindPopup('<a href="/detail/{{room.id}}">{{room.name}}</a>')
+            .openPopup();
+        {% endfor %}
+        map.setView([10.6764159, 106.69057891120418], 16)
+
+        map.on('moveend', function() {
+            map.eachLayer(function (layer) {
+                if (layer instanceof L.Marker) {
+                    map.removeLayer(layer);
+                }
+            });
+            var bounds = map.getBounds();
+            var center = map.getCenter();
+            fetch(`/api/rooms?topleft=${bounds.getNorth()},${bounds.getWest()}&bottomright=${bounds.getSouth()},${bounds.getEast()}&zoom=${map.getZoom()}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.length == 0) {
+                        return;
+                    }
+                    data.forEach(house => {
+                        L.marker([house.lat,house.lon]).addTo(map)
+                            .bindPopup(`
+                                <img src="${house.first_room.image}" style="width: 100px; height: 100px;"><br>
+                                <span>${house.first_room.name}</span><br>
+                                <span>${house.street ? house.street + ', ' : ''} ${house.ward ? house.ward + ', ' : ''} ${house.district ? house.district + ', ' : ''} ${house.city}</span>
+                                <a href="/detail/${house.first_room.id}">Chi tiết</a>
+                            `);
+                    });
+                })
+                .catch(error => console.error('Error fetching rooms:', error));
+        });
+    </script>
+
 {% endblock %}

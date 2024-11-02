@@ -20,11 +20,13 @@
             {% endfor %}          
             </div> 
         <div class="carousel-inner"> 
-            {% for image in images %} 
-            <div class="carousel-item {% if loop.first %}active{% endif %}"> 
-                <img src="{{image.url}}" class="d-block w-100" alt="..."> 
-            </div> 
-            {% endfor %}        
+          {% for image in images %}
+                <div class="carousel-item {% if loop.first %}active{% endif %}">
+                    <a href="{{ image.url }}" data-lightbox="room-images" data-title="{{ room.name }}" onclick="event.preventDefault(); lightbox.start($(this)[0]);">
+                        <img src="{{ image.url }}" class="d-block w-100" alt="...">
+                    </a>
+                </div>
+                {% endfor %}    
         </div> 
         <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev"> 
         <span class="carousel-control-prev-icon" aria-hidden="true"></span> 
@@ -117,8 +119,9 @@
             </button>
           </h2>
           <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
-            <div class="accordion-body">
-              {{room.description}}
+            <div class="accordion-body" id="description-preview">
+              {{ room.description | safe }}
+
             </div>
           </div>
         </div>

@@ -53,6 +53,8 @@ function resetAddress() {
 
 function resetFacilities() {
     document.getElementById('facilities').value = ''
+    document.getElementById('lat').value = ''
+    document.getElementById('lon').value = ''
 }
 
 function praseArgs() {
@@ -70,6 +72,7 @@ function praseArgs() {
         lon.value = args.get('lon')
         facilities.value = args.get('lat') + ',' + args.get('lon')
     }
+
     if (args.has('city')) {
         city.value = args.get('city')
     }
@@ -119,7 +122,7 @@ function search() {
 
 window.onload = async ()=>{
     await initFacilities()
-    // await praseArgs()
+    await praseArgs()
     await triggerEvent()
 }
 

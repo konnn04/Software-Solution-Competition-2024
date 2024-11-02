@@ -105,6 +105,8 @@ const typeLabel = {
     'wastewater_plant': ['Nhà máy xử lý nước thải', 0.3],
     'playground': ['Sân chơi', 0.8],
     'hamlet': ['Thôn xóm', 0.6],
+    'bar': ['Quán bar', 0.7],
+    'research': ['Nghiên cứu', 0.8],    
 }
 
 function triggerEvents(){
@@ -226,8 +228,8 @@ function triggerEvents(){
                         // if (check) {
                             locationAlert.className = 'alert alert-success';
                             locationAlert.innerHTML = 'Tọa độ hợp lệ';
-                            type.value = typeLabel[data.type][0] || 'Không xác định';
-                            type2.value = typeLabel[data.type][0] || 'Không xác định';
+                            type.value = (typeLabel[data.type] || ['Không xác định'])[0]
+                            type2.value = (typeLabel[data.type] || ['Không xác định'])[0]
                             fullAddress.value = data.display_name;
                             fullAddress2.value = data.display_name;
                             importance.value = data.importance;

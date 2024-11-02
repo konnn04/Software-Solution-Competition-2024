@@ -42,10 +42,13 @@
             <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Link</a>
           </li> -->
         </ul>
-        <ul class="navbar-nav d-flex align-items-center">
+        <ul class="navbar-nav d-flex align-items-start">
           {% if user is none %}
             <li class="nav-item">
-              <a class="nav-link" href="/login">Login</a>
+              <a class="nav-link" href="/login">Đăng nhập</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/register">Đăng ký</a>
             </li>
           {% else %}
             <li class="nav-item">
