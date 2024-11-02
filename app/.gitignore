@@ -8,3 +8,4 @@ __pycache__/
 *.pycache
 *.zip
 app\config.py
+app\static\file\*
