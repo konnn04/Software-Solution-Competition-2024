@@ -84,12 +84,18 @@
                     {% endif %}
                     <div class="card-body">
                         <h6 class="card-title">{{ room.name }}</h6>
-                        <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
+                        <p class="card-text">{{room.house.street + ', ' if room.house.street and user else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
                         
                         <span class="badge bg-warning">{{ room.rate}} <i class="fas fa-star"></i></span> <span class="badge bg-success">{{ room.house.distance }} km</span> <span class="badge bg-info">{{ room.house.type }}</span> <span class="badge bg-secondary">{{ room.current_people}}/{{ room.max_people }}</span>
 
+                        {% set price = "{:,.0f}".format(room.price).replace(",", ".") %}
+                        {% if user %}
+                        <p><strong>{{ price }} VND </strong>/ tháng</p>
+                        {% else %}
+                        <p><strong>{{ price[0] + 'x'*(price|length - 1) }} VND </strong>/ tháng</p>
+                        {% endif %}
                         
-                        <p><strong>{{ "{:,.0f}".format(room.price).replace(",", ".") }} VND</strong> / tháng</p>
+                        
                         <a href="{{url_for('detail',id = room.id)}}{{'?lat=' + point.lat +'&lon=' + point.lon if point}}" class="btn btn-primary">Chi tiết</a>
                         
                     </div>

@@ -40,11 +40,11 @@ def home():
     for r in room:
         images = RoomImage.query.filter_by(room_id=r.id).all()
         r.images = images
-    for r in room:
         r.house = House.query.get(r.house_id)
     university = None
     if current_user.is_authenticated:
         university = getSchoolName(current_user.email)
+    
 
     room.sort(key=lambda x: x.created_at, reverse=True)
     return render_template('home.html', title='Trang chủ', rooms = room, university = university)
@@ -168,10 +168,7 @@ def callback():
 @app.route('/lookup')
 # @login_required
 def lookup():
-    if current_user.is_authenticated and current_user.role == 'student':
-        university = getSchoolName(current_user.email)
-    else:
-        university = "Đại học Việt Nam"
+    
     page = request.args.get('page', 1, type=int)
     per_page = 10
     lat = request.args.get('lat')
@@ -235,6 +232,10 @@ def lookup():
     end = start + per_page
     paginated_rooms = rooms[start:end]
     
+    if current_user.is_authenticated and current_user.role == 'student':
+        university = getSchoolName(current_user.email)
+    else:
+        university = "Đại học Việt Nam"
 
     return render_template('lookup.html', title='Tra cứu', rooms=paginated_rooms, university=university, page=page, total=total, per_page=per_page, point = point)
 

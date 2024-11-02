@@ -9,13 +9,13 @@
             {% if user.role == 'student' %}
             Sinh viên trường {{university}} 
             {% endif %}
-             </p>
-        
-        
-
+             </p>    
     {% endif %}
     <h3>Tất cả trọ đang có</h3>
     <p>Sau đây là danh sách các phòng trọ vừa được đăng tải</p>
+    {% if user is none %}
+        <p>Để <strong>xem giá phòng và địa chỉ chi tiết</strong>, vui lòng <a href="/login">đăng nhập</a></p>
+    {% endif %}
     <br>
     <div class="row row-cols-1 row-cols-md-3 g-3" style="max-height: 80vh; overflow-y: auto;">
         {% for room in rooms %}
@@ -26,7 +26,21 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{room.name}}</h5>
-                    <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
+                    <p class="card-text">
+{{ room.house.street + ', ' if room.house.street and user else '' }}
+{{ room.house.ward + ', ' if room.house.ward else '' }}
+{{ room.house.district + ', ' if room.house.district else '' }}
+{{ room.house.city if room.house.city else '' }}
+                    </p>
+                    {% set price = "{:,.0f}".format(room.price).replace(",", ".") %}
+                    
+                    <p class="card-text"> 
+                        {% if user %}
+                            <strong>{{ price }} VND </strong>/ tháng
+                        {% else %}
+                            <strong>{{ price[0] + 'x'*(price|length - 1) }} VND </strong>/ tháng
+                        {% endif %}
+                    </p>
                     <a href="/detail/{{room.id}}" class="btn btn-primary">Chi tiết</a>
                 </div>
             </div>
