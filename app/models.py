@@ -51,6 +51,8 @@ class House(db.Model):
 
     rate = db.Column(db.Float, nullable=False, default=0)
 
+    rooms = db.relationship('Room', backref='house', cascade='all, delete-orphan')
+
     created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())    
     
@@ -70,6 +72,8 @@ class Room(db.Model):
 
     created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())    
+
+    images = db.relationship('RoomImage', backref='room', cascade='all, delete-orphan')
 
     
 
