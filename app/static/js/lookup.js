@@ -119,7 +119,7 @@ function search() {
 
 window.onload = async ()=>{
     await initFacilities()
-    await praseArgs()
+    // await praseArgs()
     await triggerEvent()
 }
 

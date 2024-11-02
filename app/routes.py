@@ -166,9 +166,12 @@ def callback():
 
 
 @app.route('/lookup')
-@login_required
+# @login_required
 def lookup():
-    university = getSchoolName(current_user.email)
+    if current_user.is_authenticated and current_user.role == 'student':
+        university = getSchoolName(current_user.email)
+    else:
+        university = "Đại học Việt Nam"
     page = request.args.get('page', 1, type=int)
     per_page = 15
     lat = request.args.get('lat')
@@ -179,68 +182,54 @@ def lookup():
     ward = request.args.get('ward')
     price = int(request.args.get('price', 0))
 
+    # print(lat, lon, city, district, ward, price)
+    point = None
     if lat and len(lat) > 0 and len(lon) > 0:
-        # print(lat, lon)
-        # try:
-        houses = search(lat, lon,price)
-        rooms = []
-        for house in houses:
-            room = Room.query.filter_by(house_id=house.id).all()
-            # for r in room:
-            #     if r.price > price:
-            #         room.remove(r)                  
-            for r in room:
-                images = RoomImage.query.filter_by(room_id=r.id).all()
-                r.images = images
-            for r in room:
-                r.house = House.query.get(r.house_id)
-            rooms += room
-
-        # Phân trang kết quả
-        total = len(rooms)
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_rooms = rooms[start:end]
-
-        return render_template('lookup.html', title='Tra cứu', rooms=paginated_rooms, university=university, page=page, total=total, per_page=per_page)
-        # except Exception as e:
-        #     print(e)
-        #     return redirect(url_for('lookup'))
-    if city and len(city) > 0:
-        # try:
+        houses = search(lat, lon)
+        point = {
+            'lat': lat,
+            'lon': lon
+        }
+    elif city and len(city) > 0:
         address = " ".join(filter(None, [city, district, ward]))
         location = getLocation(address)
+        # print(address)
         if 'error' in location:
             return redirect(url_for('lookup'))
         lat = location['lat']
         lon = location['lon']
-        # print(lat, lon)
-        houses = search(lat, lon, price)
-        rooms = []
+        point = {
+            'lat': lat,
+            'lon': lon
+        }
 
+        houses = search(lat, lon, city, district, ward)   
+    else:
+        houses = House.query.all()
         for house in houses:
-            room = Room.query.filter_by(house_id=house.id).all()
-            for r in room:
-                images = RoomImage.query.filter_by(room_id=r.id).all()
-                r.images = images
-            for r in room:
-                r.house = House.query.get(r.house_id)
-            rooms += room
+            house.distance = 0
+    rooms = []
+    for house in houses:
+        room = Room.query.filter_by(house_id=house.id).all()
+        for r in room:
+            if (price>0 and r.price > price):
+                room.remove(r)
+                continue            
+            images = RoomImage.query.filter_by(room_id=r.id).all()
+            r.images = images
+            r.house = House.query.get(r.house_id)
+            r.rate = calculateRate(house, r)
 
-        # Phân trang kết quả
-        total = len(rooms)
-        start = (page - 1) * per_page
-        end = start + per_page
-        paginated_rooms = rooms[start:end]
+        rooms += room
+    # Phân trang kết quả
+    rooms.sort(key=lambda x: (x.house.distance, -x.rate))
+    total = len(rooms)
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_rooms = rooms[start:end]
+    
 
-        return render_template('lookup.html', title='Tra cứu', rooms=paginated_rooms, university=university, page=page, total=total, per_page=per_page)
-        # except Exception as e:
-        #     print(e)
-        #     return redirect(url_for('lookup'))    
-    return render_template('lookup.html', title='Tra cứu', rooms=[], university=university, page=page, total=0, per_page=per_page)
-
-
-
+    return render_template('lookup.html', title='Tra cứu', rooms=paginated_rooms, university=university, page=page, total=total, per_page=per_page, point = point)
 
 @app.route('/rent/addrenter', methods=['GET', 'POST'])
 @login_required
@@ -423,7 +412,7 @@ def detail(id):
     user_upload = User.query.get(house.renter)
     t = {
         'type': {
-            'phongtro': 'Phòng trọ',
+            'tro': 'Phòng trọ',
             'chungcu': 'Chung cư',
             'nhanguyencan': 'Nhà nguyên căn',
         }.get(room.type, 'Khác'),
@@ -435,7 +424,10 @@ def detail(id):
             4: 'Nặng'
         }.get(house.flood, 'Không xác định'),
         'matching': 'Có' if room.matching else 'Không',
+        'safe': 'Không xác định' if house.importance > 1 else 'Khá' if house.importance > 0.5 else 'Tốt',
+        'rank': 'Đông đúc' if house.place_rank > 26 else 'Bình thường' if house.place_rank > 22 else 'Thưa thớt'
     }
+    caculate_rate = calculateRate(house, room)
     reviews = Review.query.filter_by(house_id = house.id).all()
     reviews = sorted(reviews, key=lambda x: x.created_at, reverse=True)
     for r in reviews:
@@ -445,7 +437,7 @@ def detail(id):
         review_myself = Review.query.filter_by(house_id = house.id, user_id = current_user.id).first()
     if review_myself:
         review_myself.user = User.query.get(review_myself.user_id)
-    return render_template('detail.html', title='Chi tiết', house=house, images=images, room=room, t=t , reviews = reviews, review_myself = review_myself)
+    return render_template('detail.html', title='Chi tiết', house=house, images=images, room=room, t=t , reviews = reviews, review_myself = review_myself, caculate_rate = caculate_rate)
 
 @app.route('/detail/<int:id_room>/<int:id_review>/delete')
 @login_required
@@ -493,6 +485,23 @@ def review(id, house_id):
         db.session.commit()
     return redirect(url_for('detail', id=id))
 
+@app.route('/profile') 
+@login_required
+def profile():
+    if current_user.role == 'student':
+        university = getSchoolName(current_user.email)
+    else:
+        university = None
+    return render_template('profile.html', title='Thông tin cá nhân', university=university)
+
+@app.route('/matchroom')
+@login_required
+def matchroom():
+    if current_user.role == 'student':
+        university = getSchoolName(current_user.email)
+    else:
+        university = None
+    return render_template('matchroom.html', title='Phòng trọ phù hợp', university=university)
 
 def addRenterNew(request):
     name = request.form['name']

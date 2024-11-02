@@ -119,7 +119,7 @@ def getFacilities(school):
     return {   }
 
 def getLocation(address):
-    url = "https://nominatim.openstreetmap.org/search.php?q=" + address + "&format=json".lower().replace(" ", "%20")
+    url = "https://nominatim.openstreetmap.org/search.php?q=" + address + "&format=json".lower()
     # print(url)
     response = requests.get(url)
     if response.status_code != 200:
@@ -194,14 +194,100 @@ def traficAPI(slat, slon, elat, elon):
 
 
 
-def search(lat,lon, price):
+def search(lat,lon, city=None, district=None, ward=None):
     lat = float(lat)
     lon = float(lon)
     houses = House.query.all()
     for h in houses:
+        if city and h.city != city:
+            houses.remove(h)
+            continue
+        if district and h.district != district:
+            houses.remove(h)
+            continue
+        if ward and h.ward != ward:
+            houses.remove(h)
+            continue
         d = distance(lat, lon, h.lat, h.lon)
-        h.distance = round(d*0.7, 2)
+        
+        h.distance = round(d*0.2 + d, 2)
+        if  h.distance >50:
+            houses.remove(h)
+            continue
 
     houses = sorted(houses, key=lambda x: x.distance)
     return houses
 
+def getLocationRate(type):
+    return {
+        'Khu dân cư': 0.8,
+        'Khu thương mại': 0.7,
+        'Khu công nghiệp': 0.4,
+        'Khu vui chơi giải trí': 0.7,
+        'Trường học': 0.9,
+        'Bệnh viện': 1.0,
+        'Cơ quan công an': 1.0,
+        'Cơ quan hành chính': 0.9,
+        'Sân vận động': 0.5,
+        'Chợ': 0.6,
+        'Công viên': 0.7,
+        'Trung tâm thương mại': 0.7,
+        'Trường đại học': 0.8,
+        'Quốc lộ, đường chính': 0.7,
+        'Khu vực đông dân cư': 0.8,
+        'Khu vực thưa dân cư': 0.7,
+        'Khu vực ít dân cư': 0.6,
+        'Bến phà': 0.4,
+        'Không xác định': 0.3,
+        'Trung tâm thể thao': 0.6,
+        'Dinh thự': 0.8,
+        'Quán cà phê': 0.7,
+        'Nhà hàng nhanh': 0.7,
+        'Ngân hàng': 0.9,
+        'Sân bay': 0.5,
+        'Đường cao tốc': 0.4,
+        'Khu vui chơi': 0.7,
+        'Sân golf': 0.8,
+        'Cây cầu': 0.6,
+        'Siêu thị': 0.7,
+        'Khu hành chính': 0.9,
+        'Pháo đài': 0.7,
+        'Trạm xe lửa': 0.6,
+        'Sân golf nhỏ': 0.8,
+        'Sân bóng': 0.6,
+        'Thư viện': 0.9,
+        'Tiện ích': 0.7,
+        'Bể bơi': 0.7,
+        'Chung cư': 0.8,
+        'Nhà riêng': 0.9,
+        'Dịch vụ': 0.6,
+        'Nhà hàng': 0.7,
+        'Bãi đậu xe': 0.5,
+        'Nhà máy xử lý nước thải': 0.3,
+        'Sân chơi': 0.8,
+        'Thôn xóm': 0.6,
+    }.get(type, 0.5)
+
+
+def calculateRate(house,room):
+    reviews = Review.query.filter_by(house_id=house.id).all()
+    v3_safe = 1 if house.importance > 1 else 3 if house.importance > 0.5 else 5
+
+
+    safe_rates = [v3_safe*getLocationRate(house.type)] + [r.safe_rate for r in reviews]
+    safe_avg = sum(safe_rates)/len(safe_rates) if len(safe_rates) > 0 else 0
+    
+    env_rates = [4] + [r.env_rate for r in reviews]
+    env_avg = sum(env_rates)/len(env_rates) if len(env_rates) > 0 else 0
+
+    traffic_rates =[4] + [r.traffic_rate for r in reviews]
+    traffic_avg = sum(traffic_rates)/len(traffic_rates) if len(traffic_rates) > 0 else 0
+
+    flood_rates =[5 - house.flood] + [r.flood_rate for r in reviews]
+    flood_avg = sum(flood_rates)/len(flood_rates) if len(flood_rates) > 0 else 0
+
+    price_rates = [4] + [r.price_rate for r in reviews]
+    price_avg = sum(price_rates)/len(price_rates) if len(price_rates) > 0 else 0
+
+    rate = (safe_avg + env_avg + traffic_avg + flood_avg + price_avg)/5
+    return rate

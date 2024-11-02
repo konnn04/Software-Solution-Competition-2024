@@ -1,0 +1,32 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+
+    <h1>Thông tin cá nhân</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{user.avatar}}" alt="Avatar" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <h3>{{user.name}}</h3>
+            <p><strong>Email:</strong> {{user.email}}</p>
+            <p><strong>Số điện thoại:</strong> {{user.phone}}</p>
+            <p><strong>Địa chỉ:</strong> {{user.address}}</p>
+            <p><strong>Ngày sinh:</strong> {{user.dob}}</p>
+            <p><strong>Trường:</strong> {{university}}</p>
+            <p><strong>Quyền:</strong> {{user.role}}</p>
+            <a href="/edit-profile" class="btn btn-primary">Chỉnh sửa</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelector('#lat').value = localStorage.getItem('lat');
+            document.querySelector('#lon').value = localStorage.getItem('lon');
+        });
+    </script>
+    
+{% endblock %}

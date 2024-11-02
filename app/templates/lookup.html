@@ -12,8 +12,8 @@
 {% block content %}
 
     <h1>Tra cứu</h1>
-    <div>
-        Bạn là sinh viên trường <strong id="school">{{university}}</strong>
+    <div style="opacity: {% if user.role == 'student' %}1{% else %}0{% endif %}">
+    Bạn là sinh viên trường <strong id="school">{{university}}</strong>
     </div>
     <hr>
     <form id="form" class="row g-3" enctype="multipart/form-data">
@@ -58,7 +58,7 @@
         </div>
         <div class="col-md-3">
             <label for="price" class="form-label">Giá thuê</label>
-            <input type="number" name="price" id="price" class="form-control" value="2000000">
+            <input type="number" name="price" id="price" class="form-control" value="">
             <div class="invalid-feedback">
                 Vui lòng nhập giá thuê hợp lệ.
             </div>
@@ -73,7 +73,7 @@
         {% for room in rooms %}
             <div class="col-md-4">
                 <div class="card mb-4">
-                    {% if room.images and room.house.distance < 25 %}
+                    {% if room.images %}
                         <img src="{{ room.images[0].url }}" class="card-img-top" alt="...">
                     {% else %}
                         <img src="/static/default.jpg" class="card-img-top" alt="No image available">
@@ -81,12 +81,12 @@
                     <div class="card-body">
                         <h6 class="card-title">{{ room.name }}</h6>
                         <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
-                        <a href="/detail/{{ room.id }}" class="btn btn-primary">Xem thử</a>
                         
-                        <span class="badge bg-warning">{{ room.house.rate}} <i class="fas fa-star"></i></span> <span class="badge bg-success">{{ room.house.distance }} km</span> <span class="badge bg-info">{{ room.house.type }}</span> <span class="badge bg-secondary">{{ room.current_people}}/{{ room.max_people }}</span>
+                        <span class="badge bg-warning">{{ room.rate}} <i class="fas fa-star"></i></span> <span class="badge bg-success">{{ room.house.distance }} km</span> <span class="badge bg-info">{{ room.house.type }}</span> <span class="badge bg-secondary">{{ room.current_people}}/{{ room.max_people }}</span>
 
                         
-                        <p>Giá thuê: <strong>{{ "{:,.0f}".format(room.price).replace(",", ".") }} VND</strong> / tháng</p>
+                        <p><strong>{{ "{:,.0f}".format(room.price).replace(",", ".") }} VND</strong> / tháng</p>
+                        <a href="{{url_for('detail',id = room.id)}}{{'?lat=' + point.lat +'&lon=' + point.lon if point}}" class="btn btn-primary">Xem thử</a>
                         
                     </div>
                 </div>
