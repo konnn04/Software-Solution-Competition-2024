@@ -80,11 +80,13 @@
                     {% endif %}
                     <div class="card-body">
                         <h6 class="card-title">{{ room.name }}</h6>
-                        <p class="card-text">{{ room.house.street }}, {{ room.house.ward }}, {{ room.house.district }}, {{ room.house.city }}</p>
+                        <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
                         <a href="/detail/{{ room.id }}" class="btn btn-primary">Xem thử</a>
-                        <span class="badge bg-primary">{{ room.house.distance}} km </span>
-                        <span class="badge bg-primary">Khả năng ngập xung quanh: {{ room.house.flood }} </span>
-                        <p>Giá thuê: <strong>{{ room.price }} VND</strong> / tháng</p>
+                        
+                        <span class="badge bg-warning">{{ room.house.rate}} <i class="fas fa-star"></i></span> <span class="badge bg-success">{{ room.house.distance }} km</span> <span class="badge bg-info">{{ room.house.type }}</span> <span class="badge bg-secondary">{{ room.current_people}}/{{ room.max_people }}</span>
+
+                        
+                        <p>Giá thuê: <strong>{{ "{:,.0f}".format(room.price).replace(",", ".") }} VND</strong> / tháng</p>
                         
                     </div>
                 </div>

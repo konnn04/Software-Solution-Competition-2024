@@ -415,7 +415,10 @@ def rent():
 @app.route('/detail/<int:id>')
 def detail(id):
     room = Room.query.get(id)
+    if not room:
+        return redirect(url_for('home'))
     house = House.query.get(room.house_id)
+    house.user = User.query.get(house.renter)
     images = RoomImage.query.filter_by(room_id=id).all()
     user_upload = User.query.get(house.renter)
     t = {
@@ -433,7 +436,63 @@ def detail(id):
         }.get(house.flood, 'Không xác định'),
         'matching': 'Có' if room.matching else 'Không',
     }
-    return render_template('detail.html', title='Chi tiết', house=house, images=images, room=room, user = user_upload, t=t)
+    reviews = Review.query.filter_by(house_id = house.id).all()
+    reviews = sorted(reviews, key=lambda x: x.created_at, reverse=True)
+    for r in reviews:
+        r.user = User.query.get(r.user_id)
+    review_myself = None
+    if current_user.is_authenticated and current_user.role == 'student':
+        review_myself = Review.query.filter_by(house_id = house.id, user_id = current_user.id).first()
+    if review_myself:
+        review_myself.user = User.query.get(review_myself.user_id)
+    return render_template('detail.html', title='Chi tiết', house=house, images=images, room=room, t=t , reviews = reviews, review_myself = review_myself)
+
+@app.route('/detail/<int:id_room>/<int:id_review>/delete')
+@login_required
+def deleteReview(id_review, id_room):
+    review = Review.query.get(id_review)
+    db.session.delete(review)
+    db.session.commit()
+    return redirect(url_for('detail', id=id_room))
+
+@app.route('/detail/<int:house_id>/<int:id>', methods=['POST'])
+@login_required
+def review(id, house_id):
+    if (current_user.role == 'renter'):
+        return url_for('home')
+    safe_rate = request.form['safe_rate']
+    env_rate = request.form['env_rate']
+    traffic_rate = request.form['traffic_rate']
+    flood_rate = request.form['flood_rate']
+    price_rate = request.form['price_rate']
+    content = request.form['content']
+    rate = (int(safe_rate) + int(env_rate) + int(traffic_rate) + int(flood_rate) + int(price_rate)) / 5
+    review = Review.query.filter_by(house_id = house_id, user_id = current_user.id).first()
+    if review:
+        review.safe_rate = safe_rate
+        review.env_rate = env_rate
+        review.traffic_rate = traffic_rate
+        review.flood_rate = flood_rate
+        review.price_rate = price_rate
+        review.rate = rate
+        review.content = content
+        db.session.commit()
+    else:
+        review = Review(
+            user_id = current_user.id,
+            house_id = house_id,
+            rate = rate,
+            env_rate = env_rate,
+            safe_rate = safe_rate,
+            traffic_rate = traffic_rate,
+            flood_rate = flood_rate,
+            price_rate = price_rate,
+            content = content
+        )
+        db.session.add(review)
+        db.session.commit()
+    return redirect(url_for('detail', id=id))
+
 
 def addRenterNew(request):
     name = request.form['name']

@@ -11,8 +11,8 @@
 
 {% block content %}
 
-<div class="row align-items-start mt-5" style="justify-content: space-around;"> 
-    <div class="col-7 pass"> 
+<div class="row pass">
+    <div class="col-md-7 pass"> 
         <div id="carouselExampleIndicators" class="carousel slide gallery" data-bs-ride="carousel"> 
             <div class="carousel-indicators"> 
             {% for image in images %} 
@@ -35,48 +35,19 @@
         <span class="visually-hidden">Next</span> 
         </button> 
         </div> 
-        <hr>
-        <div class="my-3"> 
-            <h5>Thông tin chung</h5>
-            <div class="row">
-                <div class="col-md-6">
-                    <p>Diện tích: <strong>{{room.area}} m<sup>2</sup></strong></p>
-                    <p>Loại phòng: <strong>{{t.type}}</strong></p>
-                    <p>Khả năng ngập: <strong>{{t.flood}}</strong></p>
-                </div>
-                <div class="col-md-6">
-                    <p>Loại: <strong>{{house.type}}</strong></p>
-                    <p>Tình trạng: <strong>{{room.current_people}}/{{room.max_people}}</strong></p>
-                    <p>Ở ghép: <strong>{{t.matching}}</strong></p>
-                </div>
-            </div>
-        </div>
         
-        <div class="accordion" id="accordionPanelsStayOpenExample">
-          <div class="accordion-item">
-            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
-              <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
-                Mô tả
-              </button>
-            </h2>
-            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
-              <div class="accordion-body">
-                {{room.description}}
-              </div>
-            </div>
-          </div>
-        </div>
     </div>         
-    <div class="col-4 "style="text-align: left; margin-top: 1rem; margin-bottom: 1rem;"> 
+    <div class="col-md-4 "style="text-align: left; margin-top: 1rem; margin-bottom: 1rem;"> 
         <div class = "row"> 
             <div class="mb-3"> 
                 <h2> {{room.name}} </h2>
             </div>
             <div class="mb-3"> 
                 <p>Ngày thêm: <strong>{{ house.created_at.strftime('%d-%m-%Y') }}</strong></p>
-                <p>Địa chỉ: <strong>{{house.street + ', ' if house.street else ''}} {{house.ward + ', ' if house.ward else ''}} {{house.district + ', ' if house.district else ''}} {{house.city}}</strong><span class="badge bg-success mx-3 pointer" id="show-map">Xem bản đồ</span>
+                <p>Địa chỉ: <strong>{{house.street + ', ' if house.street else ''}} {{house.ward + ', ' if house.ward else ''}} {{house.district + ', ' if house.district else ''}} {{house.city}}</strong> <a href="http://maps.google.com/maps?q=loc:{{house.lat}},{{house.lon}}" target="_blank" rel="noopener noreferrer"><span class="badge bg-success mx-3 pointer" id="show-map">Xem bản đồ</span></a>
                 </p>
             </div>
+            
             <div class = "d-flex pass"  style="justify-content: space-between; align-items: center;"> 
                 <div class="row">  
                   <div class="d-flex" style="margin-top: 0.2rem; margin-bottom: 0;">
@@ -93,12 +64,13 @@
             </div> 
         <div class="" > 
             <div role="status"> 
-                <h3 class="text-danger" style="margin-top: 0.4rem; margin-bottom: 0;">{{room.price}} VNĐ / tháng</h3>
+                <h4 class="text-danger" style="margin-top: 0.4rem; margin-bottom: 0;"> {{ "{:,.0f}".format(room.price).replace(",", ".") }} VNĐ / tháng</h4>
+            
             </div> 
             <span class="note text-muted">Đã bao gồm phí dịch vụ</span>
         </div> 
-        <h5 class ="pass">Liên hệ: <strong>{{user.phone}} - {{user.name}}</strong></h5>
-        </div> 
+        <h6 class ="pass">Liên hệ: <strong>{{house.user.phone}} - {{house.user.name}}</strong></h6>
+      </div> 
         <!-- <div class="row pass" style="margin-top: 1rem;"> 
             <div class="mb-3"> 
                 
@@ -106,6 +78,166 @@
         </div> -->
     </div> 
 </div> 
+<div class="row pass">
+    <div class="col-md-7 pass"> 
+      <hr>
+      <div class="my-3"> 
+          <h5>Thông tin chung</h5>
+          <div class="row">
+              <div class="col-md-6">
+                  <p>Diện tích: <strong>{{room.area}} m<sup>2</sup></strong></p>
+                  <p>Loại phòng:<strong>{{t.type}}</strong></p>
+                  <p>Khả năng ngập: <strong>{{t.flood}}</strong></p>
+              </div>
+              <div class="col-md-6">
+                  <p>Loại: <strong>{{house.type}}</strong></p>
+                  <p>Tình trạng: <strong>{{room.current_people}}/{{room.max_people}}</strong></p>
+                  <p>Ở ghép: <strong>{{t.matching}}</strong></p>
+              </div>
+          </div>
+      </div>
+      
+      <div class="accordion" id="accordionPanelsStayOpenExample">
+        <div class="accordion-item">
+          <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+            <button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+              Mô tả
+            </button>
+          </h2>
+          <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse show" aria-labelledby="panelsStayOpen-headingOne">
+            <div class="accordion-body">
+              {{room.description}}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div> 
+    <div class="col-md-4 pass"> </div>
+</div>
+
+<div class="row pass">
+    <div class="col-md-7 pass"> 
+        <hr>
+        <div class="my-3"> 
+            <h5>Các đánh giá</h5>
+
+            {% if user.role != 'student' %}
+                <p>Vui lòng <a href="/login">đăng nhập</a> bằng tài khoản sinh viên để đánh giá</p>                
+            {% else %}           
+              {% if review_myself %}
+              <button class="btn btn-primary" data-bs-toggle="modal" id="editReview" data-bs-target="#editReviewModal">Sửa đánh giá</button>
+              {% endif %} 
+            <form method="post" action="{{ url_for('review', id=room.id, house_id=house.id) }}" class="mb-3 {% if review_myself %}hidden{% endif %}">
+              
+              <div class="mb-3">
+                <label for="reviewContent" class="form-label">Đánh giá của bạn</label>
+                <textarea class="form-control" id="reviewContent" name="content" rows="3" required>{% if review_myself %}{{review_myself.content}}{% endif %}</textarea>
+              </div>
+              <div class="row">
+                <div class="mb-3 col-5" style="max-width: 150px;">
+                  <label for="safe_rate" class="form-label">An ninh</label>
+                  <select class="form-select" id="safe_rate" name="safe_rate" required value="{{review_myself.safe_rate }}">
+                    <option value="5">Rất tốt</option>
+                    <option value="4">Tốt</option>
+                    <option value="3">Bình thường</option>
+                    <option value="2">Tệ</option>
+                    <option value="1">Rất tệ</option>
+                  </select>
+                </div>
+                <div class="mb-3 col-5" style="max-width: 150px;">
+                  <label for="env_rate" class="form-label">Môi trường</label>
+                  <select class="form-select" id="env_rate" name="env_rate" required value="{{review_myself.env_rate}}">
+                    <option value="5">Rất tốt</option>
+                    <option value="4">Tốt</option>
+                    <option value="3">Bình thường</option>
+                    <option value="2">Tệ</option>
+                    <option value="1">Rất tệ</option>
+                  </select>
+                </div>
+                <div class="mb-3 col-5" style="max-width: 150px;">
+                  <label for="traffic_rate" class="form-label">Giao thông</label>
+                  <select class="form-select" id="traffic_rate" name="traffic_rate" required value="{{review_myself.traffic_rate }}">
+                    <option value="5">Rất tốt</option>
+                    <option value="4">Tốt</option>
+                    <option value="3">Bình thường</option>
+                    <option value="2">Tệ</option>
+                    <option value="1">Rất tệ</option>
+                  </select>
+                </div>
+                <div class="mb-3 col-5" style="max-width: 150px;">
+                  <label for="price_rate" class="form-label">Giá cả</label>
+                  <select class="form-select" id="price_rate" name="price_rate" required value="{{review_myself.price_rate }}">
+                    <option value="5">Rất hợp lý</option>
+                    <option value="4">Hợp lý</option>
+                    <option value="3">Bình thường</option>
+                    <option value="2">Tệ</option>
+                    <option value="1">Không hợp lý</option>
+                  </select>
+                </div>
+                <div class="mb-3 col-5" style="max-width: 150px;">
+                  <label for="flood_rate" class="form-label">Ngập úng</label>
+                  <select class="form-select" id="flood_rate" name="flood_rate" required value="{{review_myself.flood_rate }}">
+                    <option value="5">Không bao giờ</option>
+                    <option value="4">Hiếm khi</option>
+                    <option value="3">Thỉnh thoảng</option>
+                    <option value="2">Thường xuyên</option>
+                    <option value="1">Luôn luôn</option>
+                  </select>
+                </div>
+                
+              </div>
+              {% if review_myself %}
+                <button type="submit" class="btn btn-primary">Lưu lại</button>
+                <a href="{{ url_for('deleteReview', id_review=review_myself.id, id_room = room.id) }}" class="btn btn-danger">Xóa đánh giá</a>
+              {% else %}
+                <button type="submit" class="btn btn-primary">Đánh giá</button>
+                
+              {% endif %}
+              
+            </form>
+            {% endif %}
+            <div class="my-2">
+                {% for review in reviews %}
+                <hr>
+                <div class="d-flex mt-4 w-100" style="margin-top: 0.2rem; margin-bottom: 0;">
+                  <div class="me-3">
+                      <img src="{{review.user.avatar}}" alt="" srcset="" style="width: 40px; height: 40px; border-radius: 50%;">
+                  </div>
+                  <div>
+                      <h6>{{review.user.name}} <span class="text-muted">{{review.created_at.strftime('%d-%m-%Y')}}</span></h6>
+                      <div class="d-flex">
+                          <span class="badge bg-warning text-dark me-3 ">{{review.rate}} / 5</span>
+                          {% for i in range(1, 6) %}
+                              {% if i <= review.rate %}
+                                  <i class="fas fa-star text-warning"></i>
+                              {% else %}
+                                  <i class="far fa-star text-warning"></i>
+                              {% endif %}
+                          {% endfor %}
+                      </div>
+                      <p><strong>An ninh:</strong> {{review.safe_rate}}/5, <strong>Môi trường:</strong> {{review.env_rate}}/5, <strong>Giao thông:</strong> {{review.traffic_rate}}/5, <strong>Giá cả:</strong> {{review.price_rate}}/5, <strong>Ngập úng:</strong> {{review.flood_rate}}/5</p>
+                      <p>{{review.content}}</p>
+                  </div>
+              </div>
+              {% endfor %}
+              
+              
+              
+            </div>
+        </div>
+    </div> 
+    <div class="col-md-4 pass"> </div>
+</div>
 
 
+{% endblock %}
+
+{% block scripts %}
+    <script>
+      document.getElementById('editReview').addEventListener('click', function() {
+        document.querySelector('form').classList.toggle('hidden');
+      editReview.style.display = 'none';
+
+    });
+    </script>
 {% endblock %}

@@ -20,11 +20,13 @@
                 {% endif %}
                 <div class="card-body">
                     <h5 class="card-title">{{room.name}}</h5>
-                    <p class="card-text">{{room.house.street}}, {{room.house.ward}}, {{room.house.district}}, {{room.house.city}}</p>
+                    <p class="card-text">{{room.house.street + ', ' if room.house.street else ''}} {{room.house.ward + ', ' if room.house.ward else ''}} {{room.house.district + ', ' if room.house.district else ''}} {{room.house.city}}</p>
                     <a href="/detail/{{room.id}}" class="btn btn-primary">Xem thử</a>
                 </div>
             </div>
         </div>
         {% endfor %}
     </div>
+
+    
 {% endblock %}

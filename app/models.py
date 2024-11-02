@@ -97,6 +97,13 @@ class Review(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'), nullable=False)
     house_id = db.Column(db.Integer, db.ForeignKey('house.id'), nullable=False)
     rate = db.Column(db.Float, nullable=False)
+
+    env_rate = db.Column(db.Integer, nullable=False)
+    safe_rate = db.Column(db.Integer, nullable=False)
+    traffic_rate = db.Column(db.Integer, nullable=False)
+    flood_rate = db.Column(db.Integer, nullable=False)
+    price_rate = db.Column(db.Integer, nullable=False)
+
     content = db.Column(db.Text, nullable=True)
     created_at = db.Column(db.DateTime, default=datetime.datetime.now())
     updated_at = db.Column(db.DateTime, default=datetime.datetime.now(), onupdate=datetime.datetime.now())    
