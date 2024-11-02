@@ -302,14 +302,17 @@ def calculateRate(house,room):
     return round(rate,1)
 
 
-def composite_score(distance, rate, price):
+def composite_score(distance, rate, price, area = 25, max_people = 4):
     distance_weight = 0.3
-    rate_weight = 0.5
-    price_weight = 0.2
+    rate_weight = 0.4
+    price_weight = 0.3
+    # SUM = 1
+
+    # score_room = price / (1500000 * max_people)
 
     distance_score = max(0, 15 - distance) / 15 # Tối đa 15km
     rate_score = rate / 4.9 # Từ 0 đến 5
-    price_score = price / 8000000
+    price_score = (1500000 *max_people) / price
     return round(distance_score * distance_weight + rate_score * rate_weight + price_score * price_weight, 2)
 
 def evaluate_traffic(lat, lon, radius=8):

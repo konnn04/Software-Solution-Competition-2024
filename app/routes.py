@@ -184,7 +184,7 @@ def lookup():
 
     # print(lat, lon, city, district, ward, price)
     point = None
-    if lat and len(lat) > 0 and len(lon) > 0:
+    if lat and len(lat) > 0 and lon and len(lon) > 0:
         houses = search(lat, lon)
         point = {
             'lat': lat,
@@ -195,6 +195,7 @@ def lookup():
         location = getLocation(address)
         # print(address)
         if 'error' in location:
+            print(location['error'])
             return redirect(url_for('lookup'))
         lat = location['lat']
         lon = location['lon']
@@ -225,7 +226,9 @@ def lookup():
     rooms.sort(key=lambda x: -composite_score(
         distance= x.house.distance, 
         price=x.price,
-        rate=x.rate 
+        rate=x.rate ,
+        area=x.area,
+        max_people=x.max_people,
     ))
     total = len(rooms)
     start = (page - 1) * per_page
@@ -562,17 +565,15 @@ def approveList():
     users = User.query.filter_by(role='user').all()
     return render_template('approve.html', title='Duyệt chỗ thuê', users=users)
 
-@app.route('/approve/<int:id>', methods=['GET', 'POST'])
+@app.route('/approve/<int:id>')
 @login_required
 def approve(id):
     if current_user.role != 'admin':
         return redirect(url_for('home'))
     user = User.query.get(id)
-    if request.method == 'POST':
-        user.role == 'renter'
-        db.session.commit()
-        return redirect(url_for('approveList'))
-    return render_template('approve.html', title='Duyệt chỗ thuê', user_s=user)
+    user.role = 'renter'
+    db.session.commit()
+    return redirect(url_for('approveList'))
 
 @app.route('/approve/<int:id>/delete')
 @login_required

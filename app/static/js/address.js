@@ -17,7 +17,6 @@ function renderCity(data) {
     citis.options[citis.options.length] = new Option(x.Name, x.Name);
   }
   citis.onchange = function () {
-    districts.onchange();
     district.length = 1;
     ward.length = 1;
     if(this.value != ""){
