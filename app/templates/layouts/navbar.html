@@ -24,23 +24,16 @@
             <a class="nav-link active" aria-current="page" href="/matchroom">Tìm ở ghép</a>
           </li>
           {% endif %}
-          <!-- <li class="nav-item">
-            <a class="nav-link" href="#">Link</a>
-          </li> -->
-          <!-- <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle" href="#" id="navbarScrollingDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
-              Link
-            </a>
-            <ul class="dropdown-menu" aria-labelledby="navbarScrollingDropdown">
-              <li><a class="dropdown-item" href="#">Action</a></li>
-              <li><a class="dropdown-item" href="#">Another action</a></li>
-              <li><hr class="dropdown-divider"></li>
-              <li><a class="dropdown-item" href="#">Something else here</a></li>
-            </ul>
+
+          {% if user.role == 'admin' %}
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/approve">Duyệt tài khoản</a>
           </li>
           <li class="nav-item">
-            <a class="nav-link disabled" href="#" tabindex="-1" aria-disabled="true">Link</a>
-          </li> -->
+            <a class="nav-link active" aria-current="page" href="/admin">Quản lý</a>
+          </li>
+          {% endif %}
+
         </ul>
         <ul class="navbar-nav d-flex align-items-start">
           {% if user is none %}
@@ -63,10 +56,7 @@
             </li>
           {% endif %}
         </ul>
-        <!-- <form class="d-flex">
-          <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-          <button class="btn btn-outline-success" type="submit">Search</button>
-        </form> -->
+
       </div>
     </div>
   </nav>

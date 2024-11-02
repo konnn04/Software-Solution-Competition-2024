@@ -88,7 +88,7 @@ def register():
             dob= dob_date,
             email=email,
             password=generate_password_hash(password),
-            role='renter'
+            role='user'
         )
         db.session.add(user)
         db.session.commit()
@@ -241,8 +241,6 @@ def addRenter():
     #  Kiểm tra quyền truy cập
     if current_user.role != 'renter':
         return redirect(url_for('home'))
-    
-    
     if request.method == 'POST':
         try:
             addRenterNew(request)
@@ -414,6 +412,10 @@ def detail(id):
     house.user = User.query.get(house.renter)
     images = RoomImage.query.filter_by(room_id=id).all()
     user_upload = User.query.get(house.renter)
+    traffic_t = evaluate_traffic(house.lat, house.lon)
+    traffic = 'Bình thường'
+    if 'congestion_levels' in traffic:
+        traffic = traffic_t['congestion_levels'][0]['name']
     t = {
         'type': {
             'tro': 'Phòng trọ',
@@ -430,7 +432,7 @@ def detail(id):
         'matching': 'Có' if room.matching else 'Không',
         'safe': 'Không xác định' if house.importance > 1 else 'Khá' if house.importance > 0.5 else 'Tốt',
         'rank': 'Đông đúc' if house.place_rank > 26 else 'Bình thường' if house.place_rank > 22 else 'Thưa thớt',
-        'trafic': evaluate_traffic(house.lat, house.lon)
+        'traffic': traffic
     }
     caculate_rate = calculateRate(house, room)
     reviews = Review.query.filter_by(house_id = house.id).all()
@@ -499,6 +501,18 @@ def profile():
         university = None
     return render_template('profile.html', title='Thông tin cá nhân', university=university)
 
+@app.route('/profile/<int:id>', methods=['GET', 'POST'])
+@login_required
+def profile_id(id):
+    if current_user.role != 'admin':
+        return redirect(url_for('home'))
+    user = User.query.get(id)
+    if request.method == 'POST':
+        user.role = 'renter'
+        db.session.commit()
+        return redirect(url_for('approveList'))
+    return render_template('profile_id.html', title='Thông tin cá nhân', user_s=user)
+
 @app.route('/matchroom')
 @login_required
 def matchroom():
@@ -539,6 +553,36 @@ def api_rooms():
         }
         house_list.append(h)
     return jsonify(house_list)
+
+@app.route('/approve')
+@login_required
+def approveList():
+    if current_user.role != 'admin':
+        return redirect(url_for('home'))
+    users = User.query.filter_by(role='user').all()
+    return render_template('approve.html', title='Duyệt chỗ thuê', users=users)
+
+@app.route('/approve/<int:id>', methods=['GET', 'POST'])
+@login_required
+def approve(id):
+    if current_user.role != 'admin':
+        return redirect(url_for('home'))
+    user = User.query.get(id)
+    if request.method == 'POST':
+        user.role == 'renter'
+        db.session.commit()
+        return redirect(url_for('approveList'))
+    return render_template('approve.html', title='Duyệt chỗ thuê', user_s=user)
+
+@app.route('/approve/<int:id>/delete')
+@login_required
+def deleteUser(id):
+    if current_user.role != 'admin':
+        return redirect(url_for('home'))
+    user = User.query.get(id)
+    db.session.delete(user)
+    db.session.commit()
+    return redirect(url_for('approveList'))
 
 def addRenterNew(request):
     name = request.form['name']

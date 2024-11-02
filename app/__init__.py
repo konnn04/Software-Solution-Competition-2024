@@ -38,6 +38,8 @@ class MyAdminIndexView(AdminIndexView):
 
     def inaccessible_callback(self, name, **kwargs):
         return redirect(url_for('login'))
+    
+    
 
 class MyModelView(ModelView):
     def is_accessible(self):

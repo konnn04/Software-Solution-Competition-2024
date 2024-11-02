@@ -1,0 +1,26 @@
+{% extends 'layouts/base.html' %}
+
+{% block content %}
+    <h1>Thông tin cá nhân</h1>
+    <div class="row">
+        <div class="col-md-4">
+            <img src="{{user_s.avatar}}" alt="Avatar" class="img-fluid">
+        </div>
+        <div class="col-md-8">
+            <h3>{{user.name}}</h3>
+            <p><strong>Email:</strong> {{user_s.email}}</p>
+            <p><strong>Số điện thoại:</strong> {{user_s.phone}}</p>
+            <p><strong>Địa chỉ:</strong> {{user_s.address}}</p>
+            <p><strong>Ngày sinh:</strong> {{user_s.dob}}</p>
+            <p><strong>Trường:</strong> {{university}}</p>
+            <p><strong>Quyền:</strong> {{user_s.role}}</p>
+            <a href="{{url_for('approve', id=user_s.id)}}" class="btn btn-primary">Duyệt</a>
+            <a href="{{url_for('deleteUser', id=user_s.id)}}" class="btn btn-danger">Xóa</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+
+    
+{% endblock %}
