@@ -24,8 +24,8 @@
 1. **Clone repository:**
 
     ```sh
-    git clone https://github.com/your-repo/web-tim-tro.git
-    cd web-tim-tro
+    git clone https://github.com/konnn04/Web-based-Lodging-Rental-System-with-Auto-Evaluation.git
+    cd Web-based-Lodging-Rental-System-with-Auto-Evaluation
     ```
 
 2. **Tạo virtual environment và kích hoạt:**
