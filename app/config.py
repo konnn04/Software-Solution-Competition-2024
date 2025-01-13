@@ -1,10 +1,10 @@
 import os
 basedir = os.path.abspath(os.path.dirname(__file__))
 class Auth:
-    CLIENT_ID = ('656250180334-q2b5a7spt3lcjqfdgslotqiha1qaaj6j.apps.googleusercontent.com')
-    CLIENT_SECRET = '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'
+    CLIENT_ID = ('....apps.googleusercontent.com')
+    CLIENT_SECRET = '...'
     # REDIRECT_URI = 'https://127.0.0.1:5000/login/callback'
-    REDIRECT_URI = 'https://light-mudfish-primary.ngrok-free.app/login/callback'
+    REDIRECT_URI = '...'
     AUTH_URI = 'https://accounts.google.com/o/oauth2/auth'
     TOKEN_URI = 'https://accounts.google.com/o/oauth2/token'
     USER_INFO = 'https://www.googleapis.com/oauth2/v2/userinfo'
@@ -28,4 +28,3 @@ class Config:
 # }
 
 
-# fsq3P4FPRyom2dJPr+c19BXumxqxo/O6pSqBpSPIi7ZHwxk=
